@@ -1,8 +1,13 @@
 package com.tfg.eldest.usuario;
 
+import com.tfg.eldest.actividadformacion.ActividadFormacion;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
+
+import java.util.List;
+import java.util.Set;
 
 import static java.lang.Boolean.TRUE;
 
@@ -14,6 +19,9 @@ public class Usuario {
     private String roles;
     private String password;
     private Boolean habilitado;
+
+//    @ManyToMany(mappedBy = "usuarios")
+//    private List<ActividadFormacion> actividadesFormaciones;
 
     public Usuario() {
     }

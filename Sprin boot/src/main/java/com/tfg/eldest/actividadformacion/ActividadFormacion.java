@@ -1,10 +1,11 @@
 package com.tfg.eldest.actividadformacion;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import com.tfg.eldest.periodo.Periodo;
+import com.tfg.eldest.usuario.Usuario;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.List;
 
 import static java.lang.Boolean.TRUE;
 
@@ -16,7 +17,23 @@ public class ActividadFormacion {
     private String tipo;
     private String titulo;
     private LocalDate fech_realiz;
-    private String encargados;
+
+    @ManyToMany
+    @JoinTable(
+            name = "actividadformacion_usuarios_preparacion",
+            joinColumns = @JoinColumn(name = "actividadformacion_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id")
+    )
+    private List<Usuario> encargados;
+
+    @ManyToMany
+    @JoinTable(
+            name = "actividadformacion_usuarios_participacion",
+            joinColumns = @JoinColumn(name = "actividadformacion_id"),
+            inverseJoinColumns = @JoinColumn(name = "usuario_id")
+    )
+    private List<Usuario> participantes;
+
     private Integer numVoluntarios;
     private Integer numParticipantes;
     private String grupo_edad;
@@ -27,17 +44,24 @@ public class ActividadFormacion {
     private String observaciones;
     private Boolean visible;
 
+    @ManyToOne
+    @JoinColumn(name = "periodo_id")
+    private Periodo periodo;
+
+
     public ActividadFormacion() {
     }
 
-    public ActividadFormacion(Long id, String tipo, String titulo, LocalDate fech_realiz, String encargados, Integer numVoluntarios,
-                              Integer numParticipantes, String grupo_edad, Integer duracion, String objetivos,
-                              String materiales, String descripcion, String observaciones) {
+    public ActividadFormacion(Long id, String tipo, String titulo, LocalDate fech_realiz, List<Usuario> encargados,
+                              List<Usuario> participantes, Integer numVoluntarios, Integer numParticipantes,
+                              String grupo_edad, Integer duracion, String objetivos, String materiales,
+                              String descripcion, String observaciones, Periodo periodo) {
         this.id = id;
         this.tipo = tipo;
         this.titulo = titulo;
         this.fech_realiz = fech_realiz;
         this.encargados = encargados;
+        this.participantes = participantes;
         this.numVoluntarios = numVoluntarios;
         this.numParticipantes = numParticipantes;
         this.grupo_edad = grupo_edad;
@@ -47,6 +71,7 @@ public class ActividadFormacion {
         this.descripcion = descripcion;
         this.observaciones = observaciones;
         this.visible = TRUE;
+        this.periodo = periodo;
     }
 
 //    -- Getters y Setters --
@@ -83,12 +108,20 @@ public class ActividadFormacion {
         this.fech_realiz = fech_realiz;
     }
 
-    public String getEncargados() {
+    public List<Usuario> getEncargados() {
         return encargados;
     }
 
-    public void setEncargados(String encargados) {
+    public void setEncargados(List<Usuario> encargados) {
         this.encargados = encargados;
+    }
+
+    public List<Usuario> getParticipantes() {
+        return participantes;
+    }
+
+    public void setParticipantes(List<Usuario> participantes) {
+        this.participantes = participantes;
     }
 
     public Integer getNumVoluntarios() {
@@ -163,7 +196,15 @@ public class ActividadFormacion {
         this.visible = visible;
     }
 
-//    -----------------------
+    public Periodo getPeriodo() {
+        return periodo;
+    }
+
+    public void setPeriodo(Periodo periodo) {
+        this.periodo = periodo;
+    }
+
+    //    -----------------------
 
     @Override
     public String toString() {
@@ -172,7 +213,8 @@ public class ActividadFormacion {
                 ", tipo='" + tipo + '\'' +
                 ", titulo='" + titulo + '\'' +
                 ", fech_realiz=" + fech_realiz +
-                ", encargados='" + encargados + '\'' +
+                ", encargados=" + encargados +
+                ", participantes=" + participantes +
                 ", numVoluntarios=" + numVoluntarios +
                 ", numParticipantes=" + numParticipantes +
                 ", grupo_edad='" + grupo_edad + '\'' +
@@ -182,6 +224,7 @@ public class ActividadFormacion {
                 ", descripcion='" + descripcion + '\'' +
                 ", observaciones='" + observaciones + '\'' +
                 ", visible=" + visible +
+                ", periodo=" + periodo +
                 '}';
     }
 }

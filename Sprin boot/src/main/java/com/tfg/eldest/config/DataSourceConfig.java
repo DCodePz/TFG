@@ -1,8 +1,9 @@
-package com.example.demo.config;
+package com.tfg.eldest.config;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.core.annotation.Order;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 
 import javax.sql.DataSource;
@@ -25,6 +26,7 @@ public class DataSourceConfig {
     private String password;
 
     @Bean
+    @Order(1)
     public DataSource dataSource() {
         DriverManagerDataSource dataSource = new DriverManagerDataSource();
         dataSource.setDriverClassName(driverClassName);
