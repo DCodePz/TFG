@@ -53,6 +53,16 @@
 			<artifactId>sqlite-jdbc</artifactId>
 		</dependency>
 
+		<!-- htmx -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-thymeleaf</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.thymeleaf</groupId>
+			<artifactId>thymeleaf-spring6</artifactId>
+		</dependency>
+
 		<!-- Dialectos de Hibernate (incluye soporte para SQLite) -->
 		<dependency>
 			<groupId>org.hibernate.orm</groupId>
