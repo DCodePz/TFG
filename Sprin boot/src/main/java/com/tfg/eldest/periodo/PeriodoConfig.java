@@ -4,6 +4,7 @@ import com.tfg.eldest.actividadformacion.ActividadFormacion;
 import com.tfg.eldest.actividadformacion.actividad.ActividadRepository;
 import com.tfg.eldest.actividadformacion.formacion.FormacionRepository;
 import com.tfg.eldest.usuario.Usuario;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -20,6 +21,7 @@ public class PeriodoConfig {
     private final ActividadRepository actividadRepository;
     private final FormacionRepository formacionRepository;
 
+    @Autowired
     public PeriodoConfig(ActividadRepository actividadRepository, FormacionRepository formacionRepository) {
         this.actividadRepository = actividadRepository;
         this.formacionRepository = formacionRepository;

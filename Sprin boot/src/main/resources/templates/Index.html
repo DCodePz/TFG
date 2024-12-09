@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="es" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <meta name="description" content=""/>
+    <meta name="author" content=""/>
+    <title>Eldest</title>
+    <link
+            href="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/style.min.css"
+            rel="stylesheet"/>
+    <link href="css/styles.css" rel="stylesheet"/>
+    <script
+            src="https://use.fontawesome.com/releases/v6.3.0/js/all.js"
+            crossorigin="anonymous"></script>
+    <script src="https://unpkg.com/htmx.org@2.0.3"></script>
+</head>
+<body class="sb-nav-fixed"
+      th:hx-post="@{/cabecera(url='paneldecontrol', titulo='Panel de Control', periodo=${periodo}, coordinacion=${coordinacion})}"
+      hx-trigger="load" hx-target="#Main" hx-swap="innerHTML">
+<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <!-- Navbar Brand-->
+    <a class="navbar-brand ps-3">Organización</a>
+    <!-- Sidebar Toggle-->
+    <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0"
+            id="sidebarToggle"
+            href="#!">
+        <i class="fas fa-bars"></i>
+    </button>
+    <!-- Navbar options -->
+    <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <li class="nav-item">
+            <a class="nav-link"
+               th:hx-post="@{/cabecera(url='paneldecontrol', titulo='Panel de Control', periodo=${periodo}, coordinacion=${coordinacion})}"
+               hx-target="#Main" hx-swap="innerHTML"><i class="fas fa-home"></i></a>
+        </li>
+        <li th:if="${coordinacion}" class="nav-item">
+            <a class="nav-link" hx-get="/dashboard?url=content1" hx-target="#dashboard"
+               hx-swap="innerHTML">Coordinación</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link"
+               th:hx-post="@{/cabecera(url='actividades', titulo='Actividades', periodo=${periodo}, coordinacion=${coordinacion})}"
+               hx-target="#Main" hx-swap="innerHTML">Actividades</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link" hx-get="/dashboard?url=content" hx-target="#dashboard"
+               hx-swap="innerHTML">Formaciones</a>
+        </li>
+    </ul>
+
+    <!-- Navbar Search-->
+    <form class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
+        <!--            <div class="input-group">-->
+        <!--                <input-->
+        <!--                        class="form-control"-->
+        <!--                        type="text"-->
+        <!--                        placeholder="Search for..."-->
+        <!--                        aria-label="Search for..."-->
+        <!--                        aria-describedby="btnNavbarSearch"/>-->
+        <!--                <button-->
+        <!--                        class="btn btn-primary"-->
+        <!--                        id="btnNavbarSearch"-->
+        <!--                        type="button">-->
+        <!--                    <i class="fas fa-search"></i>-->
+        <!--                </button>-->
+        <!--            </div>-->
+    </form>
+    <!-- Navbar-->
+    <ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+        <li class="nav-item">
+            <a class="nav-link" th:text="${periodo}" data-bs-toggle="modal" data-bs-target="#modalCambiarPeriodo">Indefinido</a>
+        </li>
+        <li class="nav-item dropdown">
+            <a
+                    class="nav-link dropdown-toggle"
+                    id="navbarDropdown"
+                    href="#"
+                    role="button"
+                    data-bs-toggle="dropdown"
+                    aria-expanded="false"
+            ><i class="fas fa-user fa-fw"></i
+            ></a>
+            <ul
+                    class="dropdown-menu dropdown-menu-end"
+                    aria-labelledby="navbarDropdown">
+                <li><a th:text="${usuario}" class="dropdown-item disabled text-black text-center" href="#!">Invitado</a>
+                </li>
+                <li>
+                    <a class="dropdown-item" href="#!">Cambiar contraseña</a>
+                </li>
+                <li>
+                    <hr class="dropdown-divider"/>
+                </li>
+                <li><a class="dropdown-item" href="#!">Salir</a></li>
+            </ul>
+        </li>
+    </ul>
+</nav>
+<!-- Sidebar -->
+<div id="layoutSidenav">
+    <div id="layoutSidenav_nav">
+        <nav
+                class="sb-sidenav accordion sb-sidenav-dark"
+                id="sidenavAccordion">
+            <div class="sb-sidenav-footer">
+                <div class="small">Sesión iniciada como:</div>
+                <div th:text="${usuario}">Invitado</div>
+            </div>
+            <div class="sb-sidenav-menu">
+                <div class="nav">
+                    <!--                        <div class="sb-sidenav-menu-heading"></div>-->
+                    <a class="nav-link"
+                       th:hx-post="@{/cabecera(url='paneldecontrol', titulo='Panel de Control', periodo=${periodo}, coordinacion=${coordinacion})}"
+                       hx-target="#Main" hx-swap="innerHTML">
+                        <div class="sb-nav-link-icon">
+                            <i class="fas fa-dashboard"></i>
+                        </div>
+                        Panel de control
+                    </a>
+                    <a
+                            class="nav-link collapsed"
+                            href="#"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapseLayouts"
+                            aria-expanded="false"
+                            aria-controls="collapseLayouts">
+                        <div class="sb-nav-link-icon">
+                            <i class="fas fa-lock"></i>
+                        </div>
+                        Coordinación
+                        <div class="sb-sidenav-collapse-arrow">
+                            <i class="fas fa-angle-down"></i>
+                        </div>
+                    </a>
+                    <a th:hx-post="@{/cabecera(url='actividades', titulo='Actividades', periodo=${periodo}, coordinacion=${coordinacion})}"
+                       hx-target="#Main" hx-swap="innerHTML"
+                       class="nav-link collapsed"
+                       data-bs-toggle="collapse"
+                       data-bs-target="#collapsePages"
+                       aria-expanded="false"
+                       aria-controls="collapsePages">
+                        <div class="sb-nav-link-icon">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        Actividades
+                        <div class="sb-sidenav-collapse-arrow">
+                            <i class="fas fa-angle-down"></i>
+                        </div>
+                    </a>
+                    <a
+                            class="nav-link collapsed"
+                            href="#"
+                            data-bs-toggle="collapse"
+                            data-bs-target="#collapsePages"
+                            aria-expanded="false"
+                            aria-controls="collapsePages">
+                        <div class="sb-nav-link-icon">
+                            <i class="fas fa-book"></i>
+                        </div>
+                        Formaciones
+                        <div class="sb-sidenav-collapse-arrow">
+                            <i class="fas fa-angle-down"></i>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </nav>
+    </div>
+
+    <!-- Contenido -->
+    <div id="layoutSidenav_content" style="background-color: #ecf0f5">
+        <main>
+            <!-- El contenido dinámico va aquí-->
+            <div id="Main">
+                <!-- ROUTING -->
+                <p>Contenido predeterminado del layout base.</p>
+            </div>
+        </main>
+        <footer class="py-4 bg-light mt-auto">
+            <div class="container-fluid px-4">
+                <div
+                        class="d-flex align-items-center justify-content-between small">
+                    <div class="text-muted">
+                        Copyright &copy; Daniel Carrizo
+                    </div>
+                    <div>
+                        <b>Version</b>
+                        Eldest
+                        <img src="" width="20" alt="Logo de la aplicación">
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+</div>
+
+<!-- Modales -->
+<!--<div th:replace="fragments/modals/ModalesActividades :: modalNuevaActividad"></div>-->
+<div th:hx-post="@{/modals/periodo/cambiar(coordinacion=${coordinacion})}"
+     hx-trigger="load" hx-target="this" hx-swap="innerHTML"></div>
+
+<script
+        src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+        crossorigin="anonymous"></script>
+<script src="js/scripts.js"></script>
+<scriptw
+        src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js"
+        crossorigin="anonymous"></scriptw>
+<script src="assets/demo/chart-area-demo.js"></script>
+<script src="assets/demo/chart-bar-demo.js"></script>
+<script
+        src="https://cdn.jsdelivr.net/npm/simple-datatables@7.1.2/dist/umd/simple-datatables.min.js"
+        crossorigin="anonymous"></script>
+<script src="js/datatables-simple-demo.js"></script>
+</body>
+</html>

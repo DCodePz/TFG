@@ -1,0 +1,21 @@
+<div th:fragment="modalCambiarPeriodo" class="modal fade" id="modalCambiarPeriodo" tabindex="-1"
+     aria-labelledby="modalNuevaActividadLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalCambiarPeriodoLabel">Cambiar periodo</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Lista de años -->
+                <div class="list-group">
+                    <!-- Años, puedes generar esto dinámicamente con Thymeleaf -->
+                    <a class="list-group-item" th:each="periodo : ${periodos}" th:text="${periodo.nombre}"
+                       th:hx-post="@{/(periodo=${periodo.nombre}, coordinacion=${coordinacion})}"
+                       hx-trigger="load" hx-target="body" hx-swap="outerHTML"
+                       data-bs-dismiss="modal"></a>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
