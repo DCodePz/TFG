@@ -1,0 +1,73 @@
+@startuml Usuarios
+!pragma useVerticalIf on
+
+skinparam ConditionEndStyle hline
+
+title Diagrama de actividades: Usuarios
+
+start
+
+:Comprobar rol;
+
+if (¿Es coordinador?) then (Sí)
+    :Seleccionar acción;
+
+    if (¿Acción == Consultar?) then (Sí)
+        :Consultar datos;
+
+    elseif (¿Acción == Modificar?) then (Sí)
+        :Modificar datos;
+
+    elseif (¿Acción == Habilitar?) then (Sí)
+        :Habilitar usuario;
+
+    elseif (¿Acción == Inhabilitar?) then (Sí)
+        :Inhabilitar usuario;
+
+    else
+        :Acción inválida;
+
+    endif
+
+else (No)
+    if (¿Es monitor?) then (Sí)
+        :Seleccionar acción;
+
+        if (¿Acción == Consultar?) then (Sí)
+            :Consultar datos;
+
+        elseif (¿Acción == Modificar?) then (Sí)
+            :Modificar datos;
+
+        else
+            :Acción inválida;
+
+        endif
+
+    else (No)
+        if (¿Es socio?) then (Sí)
+            :Seleccionar acción;
+
+            if (¿Acción == Consultar?) then (Sí)
+                :Consultar datos;
+
+            elseif (¿Acción == Modificar?) then (Sí)
+                :Modificar datos;
+
+            elseif (¿Acción == Solicitar baja?) then (Sí)
+                :Solicitar darse de baja;
+
+            else
+                :Acción inválida;
+
+            endif
+
+        else 
+            :Rol invalido;
+
+        endif
+    endif
+endif
+
+stop
+@enduml

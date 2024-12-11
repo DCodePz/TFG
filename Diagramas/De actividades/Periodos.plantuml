@@ -1,0 +1,59 @@
+@startuml Periodos
+!pragma useVerticalIf on
+
+skinparam ConditionEndStyle hline
+
+title Diagrama de actividades: Periodos
+
+start
+
+:Comprobar rol;
+
+if (¿Es coordinador?) then (Sí)
+    :Seleccionar acción;
+
+    if (¿Acción == Consultar?) then (Sí)
+        :Consultar información;
+
+    elseif (¿Acción == Crear?) then (Sí)
+        :Crear periodo;
+
+    elseif (¿Acción == Modificar?) then (Sí)
+        :Modificar periodo;
+
+    elseif (¿Acción == Habilitar?) then (Sí)
+        :Habilitar periodo;
+
+    elseif (¿Acción == Inhabilitar?) then (Sí)
+        :Inhabilitar periodo;
+
+    else
+        :Acción no válida;
+
+    endif
+
+else (No)
+    if (¿Es monitor?) then (Sí)
+        :Seleccionar acción;
+
+        if (¿Acción == Consultar?) then (Sí)
+            :Consultar información;
+
+        else
+            :Acción no válida;
+
+        endif
+
+    else (No)
+        if (¿Es socio?) then (Sí)
+            :Acceso restringido;
+
+        else (No)
+            :Rol inválido;
+
+        endif
+    endif
+endif
+
+stop
+@enduml
