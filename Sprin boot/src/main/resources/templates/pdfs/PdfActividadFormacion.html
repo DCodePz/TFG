@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Actividad/Formación</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 30px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .section {
+            margin-bottom: 20px;
+        }
+        .section h2 {
+            margin: 0;
+            font-size: 18px;
+            color: #333;
+        }
+        .section p {
+            font-size: 14px;
+            color: #555;
+        }
+        .details {
+            border: 1px solid #ddd;
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+        .details th, .details td {
+            padding: 8px;
+            text-align: left;
+            border: 1px solid #ddd;
+        }
+        .details th {
+            background-color: #f4f4f4;
+        }
+    </style>
+</head>
+<body>
+<div class="header">
+    <h1>Actividad de Formación</h1>
+    <p>Detalles de la Actividad: <strong>{{titulo}}</strong></p>
+</div>
+
+<div class="section">
+    <h2>Información General</h2>
+    <p><strong>Tipo:</strong> {{tipo}}</p>
+    <p><strong>Número:</strong> {{numero}}</p>
+    <p><strong>Fecha de Realización:</strong> {{fech_realiz}}</p>
+</div>
+
+<div class="section">
+    <h2>Encargados</h2>
+    <ul>
+        {{encargados}}
+    </ul>
+</div>
+
+<div class="section">
+    <h2>Participantes</h2>
+    <ul>
+        {{participantes}}
+    </ul>
+</div>
+
+<div class="section">
+    <h2>Detalles de la Actividad</h2>
+    <p><strong>Grupo de Edad:</strong> {{grupo_edad}}</p>
+    <p><strong>Duración (horas):</strong> {{duracion}}</p>
+    <p><strong>Objetivos:</strong> {{objetivos}}</p>
+    <p><strong>Materiales:</strong> {{materiales}}</p>
+    <p><strong>Descripción:</strong> {{descripcion}}</p>
+    <p><strong>Observaciones:</strong> {{observaciones}}</p>
+</div>
+
+<div class="section">
+    <h2>Resumen</h2>
+    <table class="details">
+        <tr>
+            <th>Voluntarios</th>
+            <td>{{numVoluntarios}}</td>
+        </tr>
+        <tr>
+            <th>Participantes</th>
+            <td>{{numParticipantes}}</td>
+        </tr>
+        <tr>
+            <th>Visible</th>
+            <td>{{visible}}</td>
+        </tr>
+        <tr>
+            <th>Periodo</th>
+            <td>{{periodo}}</td>
+        </tr>
+    </table>
+</div>
+
+</body>
+</html>

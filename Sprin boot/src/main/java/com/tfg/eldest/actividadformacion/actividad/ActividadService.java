@@ -32,12 +32,19 @@ public class ActividadService {
         return actividad.get();
     }
 
+    public List<ActividadFormacion> getActividadesPorPeriodo(Long periodoId) {
+        return actividadRepository.getActividadesPorPeriodo(periodoId);
+    }
+
     // TODO: Revisar restricciones de campos que haya que comprobar
     public void crearActividad(ActividadFormacion actividad) {
-        if (actividad.getTitulo().isEmpty() || actividad.getEncargados().isEmpty()
-                || actividad.getGrupo_edad().isEmpty() || actividad.getObjetivos().isEmpty()
-                || actividad.getMateriales().isEmpty() || actividad.getDescripcion().isEmpty()
-                || actividad.getObservaciones().isEmpty()) {
+        if (actividad.getTitulo()==null || actividad.getTitulo().isEmpty()
+                || actividad.getEncargados()==null || actividad.getEncargados().isEmpty()
+                || actividad.getGrupo_edad()==null || actividad.getGrupo_edad().isEmpty()
+                || actividad.getObjetivos()==null || actividad.getObjetivos().isEmpty()
+                || actividad.getMateriales()==null || actividad.getMateriales().isEmpty()
+                || actividad.getDescripcion()==null || actividad.getDescripcion().isEmpty()
+                || actividad.getObservaciones()==null || actividad.getObservaciones().isEmpty()) {
             throw new IllegalStateException("Algún campo es vacio");
         }
 
@@ -57,6 +64,11 @@ public class ActividadService {
     @Transactional
     public void guardarActividad(Long actividadId, ActividadFormacion actividadModificada) {
         ActividadFormacion actividad = getActividad(actividadId);
+
+        if (actividadModificada.getNumero() != null && !actividadModificada.getNumero().isEmpty()
+                && !Objects.equals(actividad.getNumero(), actividadModificada.getNumero())) {
+            actividad.setNumero(actividadModificada.getNumero());
+        }
 
         if (actividadModificada.getTitulo() != null && !actividadModificada.getTitulo().isEmpty()
                 && !Objects.equals(actividad.getTitulo(), actividadModificada.getTitulo())) {
@@ -112,5 +124,9 @@ public class ActividadService {
                 && !Objects.equals(actividad.getObservaciones(), actividadModificada.getObservaciones())) {
             actividad.setObservaciones(actividadModificada.getObservaciones());
         }
+    }
+
+    public List<ActividadFormacion> getActividadesBusqueda(String infoBuscar, Long periodoId) {
+        return actividadRepository.getActividadesBusqueda(infoBuscar, periodoId);
     }
 }

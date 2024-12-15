@@ -15,6 +15,7 @@ public class ActividadFormacion {
     @Id
     private Long id;
     private String tipo;
+    private String numero;
     private String titulo;
     private LocalDate fech_realiz;
 
@@ -52,12 +53,13 @@ public class ActividadFormacion {
     public ActividadFormacion() {
     }
 
-    public ActividadFormacion(Long id, String tipo, String titulo, LocalDate fech_realiz, List<Usuario> encargados,
+    public ActividadFormacion(Long id, String tipo, String numero, String titulo, LocalDate fech_realiz, List<Usuario> encargados,
                               List<Usuario> participantes, Integer numVoluntarios, Integer numParticipantes,
                               String grupo_edad, Integer duracion, String objetivos, String materiales,
                               String descripcion, String observaciones, Periodo periodo) {
         this.id = id;
         this.tipo = tipo;
+        this.numero = numero;
         this.titulo = titulo;
         this.fech_realiz = fech_realiz;
         this.encargados = encargados;
@@ -74,7 +76,26 @@ public class ActividadFormacion {
         this.periodo = periodo;
     }
 
-//    -- Getters y Setters --
+    public ActividadFormacion(String numero, String titulo, LocalDate fech_realiz, List<Usuario> encargados,
+                              Integer numVoluntarios, Integer numParticipantes,
+                              String grupo_edad, Integer duracion, String objetivos, String materiales,
+                              String descripcion, String observaciones, Periodo periodo) {
+        this.numero = numero;
+        this.titulo = titulo;
+        this.fech_realiz = fech_realiz;
+        this.encargados = encargados;
+        this.numVoluntarios = numVoluntarios;
+        this.numParticipantes = numParticipantes;
+        this.grupo_edad = grupo_edad;
+        this.duracion = duracion;
+        this.objetivos = objetivos;
+        this.materiales = materiales;
+        this.descripcion = descripcion;
+        this.observaciones = observaciones;
+        this.periodo = periodo;
+    }
+
+    //    -- Getters y Setters --
 
     public Long getId() {
         return id;
@@ -90,6 +111,14 @@ public class ActividadFormacion {
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
+    }
+
+    public String getNumero() {
+        return numero;
+    }
+
+    public void setNumero(String numero) {
+        this.numero = numero;
     }
 
     public String getTitulo() {
@@ -211,6 +240,7 @@ public class ActividadFormacion {
         return "ActividadFormacion{" +
                 "id=" + id +
                 ", tipo='" + tipo + '\'' +
+                ", numero='" + numero + '\'' +
                 ", titulo='" + titulo + '\'' +
                 ", fech_realiz=" + fech_realiz +
                 ", encargados=" + encargados +
