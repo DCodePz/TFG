@@ -1,0 +1,25 @@
+<div th:fragment="modalEliminarFormacion" class="modal fade" th:id="'modalEliminarFormacion' + ${idFormacion}" tabindex="-1"
+     aria-labelledby="modalEliminarFormacionLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalEliminarFormacionLabel">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Mensaje de advertencia -->
+                <p>¿Estás seguro de que deseas eliminar esta formación? Esta acción no se puede deshacer.</p>
+                <p>"<strong><span th:text="${titulo}"></span></strong>"</p>
+            </div>
+            <div class="modal-footer">
+                <!-- Botón para cancelar -->
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <!-- Botón para confirmar la eliminación -->
+                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn"
+                        th:hx-post="@{/cabecera(url='formaciones/eliminar', titulo='Formaciones', id=${idFormacion})}"
+                        hx-target="#Main" hx-swap="innerHTML"
+                        data-bs-dismiss="modal">Eliminar</button>
+            </div>
+        </div>
+    </div>
+</div>

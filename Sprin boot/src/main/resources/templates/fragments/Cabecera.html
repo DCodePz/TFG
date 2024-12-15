@@ -1,9 +1,10 @@
 <div th:fragment="content" class="container-fluid px-4"
-     th:hx-post="@{/cuerpo/{url}(url=${url}, coordinacion=${coordinacion})}"
+     th:hx-post="@{/cuerpo/{url}(url=${url}, id=${id})}"
      hx-trigger="load" hx-target="#Cuerpo" hx-swap="innerHTML">
     <h1 th:text="${titulo}" class="mt-4">Título</h1>
     <ol class="breadcrumb mb-4">
         <li th:text="${org}" class="breadcrumb-item active">Organización</li>
     </ol>
-    <div id="Cuerpo"></div>                                                                                             <!-- ROUTING -->
+    <!-- ROUTING -->
+    <div id="Cuerpo"></div>
 </div>

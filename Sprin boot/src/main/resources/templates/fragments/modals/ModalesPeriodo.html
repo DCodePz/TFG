@@ -7,15 +7,14 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
-                <!-- Lista de años -->
-                <div class="list-group">
-                    <!-- Años, puedes generar esto dinámicamente con Thymeleaf -->
-                    <a class="list-group-item" th:each="periodo : ${periodos}" th:text="${periodo.nombre}"
-                       th:hx-post="@{/(periodo=${periodo.nombre}, coordinacion=${coordinacion})}"
-                       hx-trigger="load" hx-target="body" hx-swap="outerHTML"
-                       data-bs-dismiss="modal"></a>
-                    </ul>
+                <div class="d-flex flex-wrap justify-content-start">
+                    <button class="btn bg-light col-auto mb-2 me-2 border border-dark"
+                            th:each="periodo : ${periodos}" th:text="${periodo.nombre}"
+                            th:hx-post="@{/inicio(periodo=${periodo.id})}"
+                            hx-target="#Body" hx-swap="innerHTML"
+                            data-bs-dismiss="modal"></button>
                 </div>
             </div>
         </div>
     </div>
+</div>

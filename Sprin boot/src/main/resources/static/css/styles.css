@@ -12864,3 +12864,10 @@ body {
     font-size: 0.75rem;
     border-radius: 0.375rem !important;
 }
+
+/* Mis estilos */
+.modal-body {
+    background-color: #ecf0f5;
+    border-bottom-left-radius: 10px;  /* Redondea la esquina inferior izquierda */
+    border-bottom-right-radius: 10px; /* Redondea la esquina inferior derecha */
+}

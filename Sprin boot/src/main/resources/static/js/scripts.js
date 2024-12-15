@@ -8,7 +8,6 @@
 //
 
 window.addEventListener('DOMContentLoaded', event => {
-
     // Toggle the side navigation
     const sidebarToggle = document.body.querySelector('#sidebarToggle');
     if (sidebarToggle) {
@@ -22,5 +21,25 @@ window.addEventListener('DOMContentLoaded', event => {
             localStorage.setItem('sb|sidebar-toggle', document.body.classList.contains('sb-sidenav-toggled'));
         });
     }
-
 });
+
+// $(document).ready(function() {
+//     // Inicializar CKEditor cuando se carga por primera vez
+//     ClassicEditor
+//         .create($('#editor')[0])
+//         .catch(error => {
+//             console.error(error);
+//         });
+//
+//     // Re-inicializar CKEditor cuando HTMX actualiza el contenido dinámicamente
+//     $(document).on('htmx:afterSwap', function(event) {
+//         // Si el contenedor con el editor ha sido actualizado
+//         if ($(event.target).is('#editor-container')) {
+//             ClassicEditor
+//                 .create($('#editor')[0])  // Volver a inicializar el editor
+//                 .catch(error => {
+//                     console.error(error);
+//                 });
+//         }
+//     });
+// });
