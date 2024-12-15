@@ -29,6 +29,16 @@ public class FormacionController {
         return formacionService.getFormacion(formacionId);
     }
 
+    @GetMapping(path = "periodo/{periodoId}")
+    public List<ActividadFormacion> getFormacionesPorPeriodo(@PathVariable Long periodoId) {
+        return formacionService.getFormacionesPorPeriodo(periodoId);
+    }
+
+    @GetMapping(path = "buscar/{infoBuscar}/{periodoId}")
+    public List<ActividadFormacion> getFormacionesBusqueda(@PathVariable String infoBuscar, @PathVariable Long periodoId) {
+        return formacionService.getFormacionesBusqueda(infoBuscar, periodoId);
+    }
+
     // POST
     @PostMapping(path = "crear")
     public void crearFormacion(@RequestBody ActividadFormacion formacion) {

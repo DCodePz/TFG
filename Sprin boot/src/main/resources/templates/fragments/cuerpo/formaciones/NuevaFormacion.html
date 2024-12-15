@@ -1,0 +1,141 @@
+<div th:fragment="content" class="container-fluid px-4">
+    <div class="card mb-4">
+        <div class="card-body">
+            <!-- Contenido -->
+            <form id="formulario"
+                  th:hx-post="@{/formaciones/crear(url='formaciones', tit='Formaciones')}"
+                  hx-trigger="submit" hx-target="#Main" hx-swap="innerHTML">
+                <!-- Fila 1 -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="numero" class="form-label fw-bold">Número de formación</label>
+                        <input type="text" class="form-control" id="numero" name="numero" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="titulo" class="form-label fw-bold">Título</label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" required>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="fech_realiz" class="form-label fw-bold">Fecha de realización</label>
+                        <input type="date" class="form-control" id="fech_realiz" name="fech_realiz" required>
+                    </div>
+                </div>
+
+                <!-- Fila 2 -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Encargados</label>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle text-start" type="button"
+                                    style="width: 100%;" id="dropdownEncargados" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                Seleccionar encargados
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownEncargados" style="width: 100%;">
+                                <li class="py-1 px-3" th:each="encargado: ${encargados}">
+                                    <input class="form-check-input" type="checkbox" th:value="${encargado.id}"
+                                           th:id="'encargado ' + ${encargado.id}" th:name="'encargado ' + ${encargado.id}"/>
+                                    <label class="form-check-label ms-2" th:for="'encargado ' + ${encargado.id}">
+                                        <span th:text="${encargado.id}"></span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="numVoluntarios" class="form-label fw-bold">Número mínimo de voluntarios</label>
+                        <input type="number" class="form-control" id="numVoluntarios" name="numVoluntarios" required>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="numParticipantes" class="form-label fw-bold">Número de participantes</label>
+                        <select class="form-control" id="numParticipantes" name="numParticipantes" required>
+                            <option value="10">10</option>
+                            <option value="20">20</option>
+                            <option value="30">30</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="duracion" class="form-label fw-bold">Duración</label>
+                        <select class="form-control" id="duracion" name="duracion" required>
+                            <option value="1">1 hora</option>
+                            <option value="2">2 horas</option>
+                            <option value="3">3 horas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Fila 3 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="objetivos" class="form-label fw-bold">Objetivos</label>
+                        <textarea class="form-control" id="objetivos" name="objetivos" rows="3" required></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="materiales" class="form-label fw-bold">Materiales</label>
+                        <textarea class="form-control" id="materiales" name="materiales" rows="3" required></textarea>
+                    </div>
+                </div>
+
+                <!-- Fila 4 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Grupo de edad</label>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle text-start" type="button"
+                                    id="dropdownGrupoEdad" data-bs-toggle="dropdown" aria-expanded="false"
+                                    style="width: 100%;">
+                                Seleccionar grupo de edad
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownGrupoEdad" style="width: 100%;">
+                                <li class="py-1 px-3">
+                                    <input class="form-check-input" type="checkbox" value="Pequeños Pequeños"
+                                           id="pequeños_pequeños" name="pequeños_pequeños"/>
+                                    <label class="form-check-label ms-2" for="pequeños_pequeños">Pequeños
+                                        Pequeños</label>
+                                </li>
+                                <li class="py-1 px-3">
+                                    <input class="form-check-input" type="checkbox" value="Pequeños Grandes"
+                                           id="pequeños_grandes" name="pequeños_grandes"/>
+                                    <label class="form-check-label ms-2" for="pequeños_grandes">Pequeños Grandes</label>
+                                </li>
+                                <li class="py-1 px-3">
+                                    <input class="form-check-input" type="checkbox" value="Medianos" id="medianos"
+                                           name="medianos"/>
+                                    <label class="form-check-label ms-2" for="medianos">Medianos</label>
+                                </li>
+                                <li class="py-1 px-3">
+                                    <input class="form-check-input" type="checkbox" value="Mayores" id="mayores"
+                                           name="mayores"/>
+                                    <label class="form-check-label ms-2" for="mayores">Mayores</label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="observaciones" class="form-label fw-bold">Observaciones</label>
+                        <textarea class="form-control" id="observaciones" name="observaciones" rows="3"
+                                  required></textarea>
+                    </div>
+                </div>
+
+                <!-- Fila 5 -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="descripcion" class="form-label fw-bold">Desarrollo</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3"
+                                  required></textarea>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-start gap-2">
+                    <button id="cancelar" type="button" class="btn btn-danger"
+                            th:hx-post="@{/cabecera(url='formaciones', titulo='Formaciones')}"
+                            hx-target="#Main" hx-swap="innerHTML">
+                        Cancelar
+                    </button>
+                    <button id="guardar" type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

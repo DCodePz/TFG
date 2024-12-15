@@ -32,6 +32,10 @@ public class FormacionService {
         return formacion.get();
     }
 
+    public List<ActividadFormacion> getFormacionesPorPeriodo(Long periodoId) {
+        return formacionRepository.getFormacionesPorPeriodo(periodoId);
+    }
+
     // TODO: Revisar restricciones de campos que haya que comprobar
     public void crearFormacion(ActividadFormacion formacion) {
         if (formacion.getTitulo().isEmpty() || formacion.getEncargados().isEmpty()
@@ -112,5 +116,9 @@ public class FormacionService {
                 && !Objects.equals(formacion.getObservaciones(), actividadModificada.getObservaciones())) {
             formacion.setObservaciones(actividadModificada.getObservaciones());
         }
+    }
+
+    public List<ActividadFormacion> getFormacionesBusqueda(String infoBuscar, Long periodoId) {
+        return formacionRepository.getFormacionesBusqueda(infoBuscar, periodoId);
     }
 }

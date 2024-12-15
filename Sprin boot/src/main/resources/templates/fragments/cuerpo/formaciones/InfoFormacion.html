@@ -1,0 +1,150 @@
+<div th:fragment="content" class="container-fluid px-4">
+    <div class="card mb-4">
+        <div class="card-body">
+            <!-- Contenido -->
+            <form id="formulario"
+                  th:hx-post="@{/formaciones/guardar(url='formaciones', tit='Formaciones')}"
+                  hx-trigger="submit" hx-target="#Main" hx-swap="innerHTML">
+                <input type="hidden" id="id" name="id" th:value="${formacion.id}">
+                <!-- Fila 1 -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label for="numero" class="form-label fw-bold">Número de formacion</label>
+                        <input type="text" class="form-control" id="numero" name="numero" required
+                               th:value="${formacion.numero}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="titulo" class="form-label fw-bold">Título</label>
+                        <input type="text" class="form-control" id="titulo" name="titulo" required
+                               th:value="${formacion.titulo}">
+                    </div>
+                    <div class="col-md-4">
+                        <label for="fech_realiz" class="form-label fw-bold">Fecha de realización</label>
+                        <input type="date" class="form-control" id="fech_realiz" name="fech_realiz" required
+                               th:value="${formacion.fech_realiz}">
+                    </div>
+                </div>
+
+                <!-- Fila 2 -->
+                <div class="row mb-3">
+                    <div class="col-md-4">
+                        <label class="form-label fw-bold">Encargados</label>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle text-start" type="button"
+                                    style="width: 100%;" id="dropdownEncargados" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                Seleccionar encargados
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownEncargados" style="width: 100%;">
+                                <li class="py-1 px-3" th:each="encargado: ${encargados}">
+                                    <input class="form-check-input" type="checkbox" th:value="${encargado.key}"
+                                           th:id="'encargado ' + ${encargado.key}"
+                                           th:name="'encargado ' + ${encargado.key}"
+                                           th:checked="${encargado.value}"/>
+                                    <label class="form-check-label ms-2" th:for="'encargado ' + ${encargado.key}">
+                                        <span th:text="${encargado.key}"></span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <label for="numVoluntarios" class="form-label fw-bold">Número mínimo de voluntarios</label>
+                        <input type="number" class="form-control" id="numVoluntarios" name="numVoluntarios" required
+                               th:value="${formacion.numVoluntarios}">
+                    </div>
+                    <div class="col-md-2">
+                        <label for="numParticipantes" class="form-label fw-bold">Número de participantes</label>
+                        <select class="form-control" id="numParticipantes" name="numParticipantes" required>
+                            <option value="10" th:selected="${formacion.numParticipantes == 10}">10</option>
+                            <option value="20" th:selected="${formacion.numParticipantes == 20}">20</option>
+                            <option value="30" th:selected="${formacion.numParticipantes == 30}">30</option>
+                        </select>
+                    </div>
+                    <div class="col-md-2">
+                        <label for="duracion" class="form-label fw-bold">Duración</label>
+                        <select class="form-control" id="duracion" name="duracion" required>
+                            <option value="1" th:selected="${formacion.duracion == 10}">1 hora</option>
+                            <option value="2" th:selected="${formacion.duracion == 20}">2 horas</option>
+                            <option value="3" th:selected="${formacion.duracion == 30}">3 horas</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Fila 3 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="objetivos" class="form-label fw-bold">Objetivos</label>
+                        <textarea class="form-control" id="objetivos" name="objetivos" rows="3" required
+                                  th:text="${formacion.objetivos}"></textarea>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="materiales" class="form-label fw-bold">Materiales</label>
+                        <textarea class="form-control" id="materiales" name="materiales" rows="3" required
+                                  th:text="${formacion.materiales}"></textarea>
+                    </div>
+                </div>
+
+                <!-- Fila 4 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Grupo de edad</label>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle text-start" type="button"
+                                    id="dropdownGrupoEdad" data-bs-toggle="dropdown" aria-expanded="false"
+                                    style="width: 100%;">
+                                Seleccionar grupo de edad
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownGrupoEdad" style="width: 100%;">
+                                <li class="py-1 px-3">
+                                    <input class="form-check-input" type="checkbox" value="Pequeños Pequeños"
+                                           id="pequeños_pequeños" name="pequeños_pequeños" th:checked="${ppCheck}"/>
+                                    <label class="form-check-label ms-2" for="pequeños_pequeños">Pequeños
+                                        Pequeños</label>
+                                </li>
+                                <li class="py-1 px-3">
+                                    <input class="form-check-input" type="checkbox" value="Pequeños Grandes"
+                                           id="pequeños_grandes" name="pequeños_grandes" th:checked="${pgCheck}"/>
+                                    <label class="form-check-label ms-2" for="pequeños_grandes">Pequeños Grandes</label>
+                                </li>
+                                <li class="py-1 px-3">
+                                    <input class="form-check-input" type="checkbox" value="Medianos" id="medianos"
+                                           name="medianos" th:checked="${mdCheck}"/>
+                                    <label class="form-check-label ms-2" for="medianos">Medianos</label>
+                                </li>
+                                <li class="py-1 px-3">
+                                    <input class="form-check-input" type="checkbox" value="Mayores" id="mayores"
+                                           name="mayores" th:checked="${myCheck}"/>
+                                    <label class="form-check-label ms-2" for="mayores">Mayores</label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="observaciones" class="form-label fw-bold">Observaciones</label>
+                        <textarea class="form-control" id="observaciones" name="observaciones" rows="3" required
+                                  th:text="${formacion.observaciones}"></textarea>
+                    </div>
+                </div>
+
+                <!-- Fila 5 -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="descripcion" class="form-label fw-bold">Desarrollo</label>
+                        <textarea class="form-control" id="descripcion" name="descripcion" rows="3" required
+                                  th:text="${formacion.descripcion}"></textarea>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-start gap-2">
+                    <button id="cancelar" type="button" class="btn btn-danger"
+                            th:hx-post="@{/cabecera(url='formaciones', titulo='Formaciones')}"
+                            hx-target="#Main" hx-swap="innerHTML">
+                        Cancelar
+                    </button>
+                    <button id="guardar" type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
