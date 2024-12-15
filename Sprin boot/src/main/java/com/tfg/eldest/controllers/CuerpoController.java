@@ -64,6 +64,15 @@ public class CuerpoController {
         return "fragments/cuerpo/PanelDeControl :: content";
     }
 
+    //    COORDINACIÓN
+    @PostMapping(path = "coordinacion")
+    public String Coordinacion(HttpSession session,
+                                 @RequestParam Map<String, Object> params,
+                                 Model model) {
+
+        return "fragments/cuerpo/Coordinacion :: content";
+    }
+
     //    ACTIVIDADES
     @PostMapping(path = "actividades")
     public String Actividades(HttpSession session,
