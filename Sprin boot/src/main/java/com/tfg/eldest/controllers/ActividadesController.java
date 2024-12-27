@@ -1,5 +1,7 @@
 package com.tfg.eldest.controllers;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tfg.eldest.actividadformacion.ActividadFormacion;
 import com.tfg.eldest.periodo.Periodo;
 import com.tfg.eldest.usuario.Usuario;
@@ -87,12 +89,14 @@ public class ActividadesController {
     @PostMapping(path = "crear")
     public String Crear(HttpSession session,
                         @RequestParam Map<String, Object> params,
-                        Model model) {
+                        Model model) throws JsonProcessingException {
+        String periodoID = sessionService.getPeriodoID(session);
+
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
         // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/actividades/crear";
+        String apiUrl = this.apiUrl + "/actividades/crear/" + periodoID;
 
         String grupo_edad = "";
         if (params.get("pequeños_pequeños") != null && !params.get("pequeños_pequeños").equals("")) {
@@ -128,7 +132,7 @@ public class ActividadesController {
         // Crear la entidad Http que contiene el cuerpo de la solicitud
         HttpEntity<ActividadFormacion> requestEntity = new HttpEntity<>(nuevaActividad);
 
-        // Realizar la solicitud GET a la API de actividades
+        // Realizar la solicitud POST a la API de actividades
         ResponseEntity<Void> response = restTemplate.exchange(
                 apiUrl,
                 HttpMethod.POST,
@@ -155,7 +159,7 @@ public class ActividadesController {
     @PostMapping(path = "guardar")
     public String Guardar(HttpSession session,
                         @RequestParam Map<String, Object> params,
-                        Model model) {
+                        Model model) throws JsonProcessingException {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 

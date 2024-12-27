@@ -1,9 +1,9 @@
 <div th:fragment="content" class="sb-nav-fixed">
     <div th:hx-post="@{/cabecera(url='paneldecontrol', titulo='Panel de Control')}"
          hx-trigger="load" hx-target="#Main" hx-swap="innerHTML"></div>
-    <nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
+    <nav class="sb-topnav navbar navbar-expand navbar-dark" th:style="|background-color:${primario}|">
         <!-- Navbar Brand-->
-        <a class="navbar-brand ps-3">Organización</a>
+        <a class="navbar-brand ps-3" th:text="${org}"></a>
         <!-- Sidebar Toggle-->
         <button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0"
                 id="sidebarToggle">
@@ -17,8 +17,9 @@
                    hx-target="#Main" hx-swap="innerHTML"><i class="fas fa-home"></i></a>
             </li>
             <li th:if="${coordinacion}" class="nav-item">
-                <a class="nav-link" hx-get="/dashboard?url=content1" hx-target="#dashboard"
-                   hx-swap="innerHTML">Coordinación</a>
+                <a class="nav-link"
+                   th:hx-post="@{/cabecera(url='coordinacion', titulo='Panel de coordinación')}"
+                   hx-target="#Main" hx-swap="innerHTML">Panel de coordinación</a>
             </li>
             <li class="nav-item">
                 <a class="nav-link"
@@ -83,9 +84,9 @@
     <!-- Sidebar -->
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
-            <nav
-                    class="sb-sidenav accordion sb-sidenav-dark"
-                    id="sidenavAccordion">
+            <nav class="sb-sidenav accordion sb-sidenav-dark"
+                 id="sidenavAccordion"
+                 th:style="|background-color:${secundario}|">
                 <div class="sb-sidenav-footer">
                     <div class="small">Sesión iniciada como:</div>
                     <div th:text="${usuario}">Invitado</div>
@@ -101,12 +102,11 @@
                             </div>
                             Panel de control
                         </a>
-                        <a
-                                class="nav-link collapsed"
-                                data-bs-toggle="collapse"
-                                data-bs-target="#collapseLayouts"
-                                aria-expanded="false"
-                                aria-controls="collapseLayouts">
+                        <a class="nav-link collapsed"
+                           data-bs-toggle="collapse"
+                           data-bs-target="#collapseLayouts"
+                           aria-expanded="false"
+                           aria-controls="collapseLayouts">
                             <div class="sb-nav-link-icon">
                                 <i class="fas fa-lock"></i>
                             </div>
@@ -115,6 +115,25 @@
                                 <i class="fas fa-angle-down"></i>
                             </div>
                         </a>
+                        <div class="collapse"
+                             id="collapseLayouts"
+                             aria-labelledby="headingOne"
+                             data-bs-parent="#sidenavAccordion">
+                            <nav class="sb-sidenav-menu-nested nav">
+                                <a class="nav-link"
+                                   th:hx-post="@{/cabecera(url='coordinacion', titulo='Panel de coordinación')}"
+                                   hx-target="#Main" hx-swap="innerHTML">Panel de coordinación</a>
+                                <a th:hx-post="@{/cabecera(url='coordinacion/voluntarios', titulo='Voluntarios')}"
+                                   hx-target="#Main" hx-swap="innerHTML"
+                                   class="nav-link">Voluntarios</a>
+                                <a th:hx-post="@{/cabecera(url='coordinacion', titulo='Coordinación')}"
+                                   hx-target="#Main" hx-swap="innerHTML"
+                                   class="nav-link">Periodos</a>
+                                <a th:hx-post="@{/cabecera(url='coordinacion/personalizacion', titulo='Personalización')}"
+                                   hx-target="#Main" hx-swap="innerHTML"
+                                   class="nav-link">Personalización</a>
+                            </nav>
+                        </div>
                         <a th:hx-post="@{/cabecera(url='actividades', titulo='Actividades')}"
                            hx-target="#Main" hx-swap="innerHTML"
                            class="nav-link collapsed"
@@ -126,9 +145,6 @@
                                 <i class="fas fa-book-open"></i>
                             </div>
                             Actividades
-                            <div class="sb-sidenav-collapse-arrow">
-                                <i class="fas fa-angle-down"></i>
-                            </div>
                         </a>
                         <a th:hx-post="@{/cabecera(url='formaciones', titulo='Formaciones')}"
                            hx-target="#Main" hx-swap="innerHTML"
@@ -141,9 +157,6 @@
                                 <i class="fas fa-book"></i>
                             </div>
                             Formaciones
-                            <div class="sb-sidenav-collapse-arrow">
-                                <i class="fas fa-angle-down"></i>
-                            </div>
                         </a>
                     </div>
                 </div>
@@ -169,7 +182,7 @@
                         <div>
                             <b>Version</b>
                             Eldest
-                            <img src="" width="20" alt="Logo de la aplicación">
+                            <img th:src="${logo}" width="20" alt="Logo de la aplicación">
                         </div>
                     </div>
                 </div>
@@ -179,8 +192,6 @@
 
     <!-- Modal -->
     <div th:hx-get="@{/modals/periodo/cambiar}" hx-trigger="load" hx-target="this" hx-swap="innerHTML"></div>
-
-
 
 
     <script>

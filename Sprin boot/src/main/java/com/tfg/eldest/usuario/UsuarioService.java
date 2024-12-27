@@ -1,7 +1,5 @@
 package com.tfg.eldest.usuario;
 
-import com.tfg.eldest.actividadformacion.actividad.ActividadRepository;
-import com.tfg.eldest.periodo.Periodo;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,13 +25,16 @@ public class UsuarioService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
     }
 
+    public List<Usuario> getVoluntarios() {
+        return usuarioRepository.getVoluntarios();
+    }
+
     // TODO: Revisar restricciones de campos que haya que comprobar
     public void crearUsuario(Usuario usuario) {
-        if (usuario.getRoles().isEmpty() || usuario.getPassword().isEmpty()) {
+        if (usuario.getPassword().isEmpty()) {
             throw new IllegalArgumentException("Algún campo es vacio");
         }
 
-        usuario.setId(usuarioRepository.count() + 1);
         usuario.setHabilitado(Boolean.TRUE);
         usuarioRepository.save(usuario);
     }
@@ -48,10 +49,6 @@ public class UsuarioService {
     public void guardarUsuario(Long usuarioId, Usuario usuarioModificado) {
         Usuario usuario = getUsuario(usuarioId);
 
-        if (usuarioModificado.getRoles() != null && !usuarioModificado.getRoles().isEmpty()
-                && !Objects.equals(usuario.getRoles(), usuarioModificado.getRoles())) {
-            usuario.setRoles(usuarioModificado.getRoles());
-        }
 
         if (usuarioModificado.getPassword() != null && !usuarioModificado.getPassword().isEmpty()
                 && !Objects.equals(usuario.getPassword(), usuarioModificado.getPassword())) {
@@ -59,5 +56,9 @@ public class UsuarioService {
         }
 
         usuario.setHabilitado(usuarioModificado.getHabilitado());
+    }
+
+    public List<Usuario> getVoluntariosBusqueda(String infoBuscar) {
+        return usuarioRepository.getVoluntariosBusqueda(infoBuscar);
     }
 }

@@ -15,9 +15,10 @@ public class SessionService {
     private String apiUrl;
 
     // Método para guardar datos en la sesión
-    public void setSession(HttpSession session, String usuarioID, String periodoID) {
+    public void setSession(HttpSession session, String usuarioID, String periodoID, String coordinacion) {
         session.setAttribute("usuarioID", usuarioID);
         session.setAttribute("periodoID", periodoID);
+        session.setAttribute("coordinacion", coordinacion);
     }
 
     // Método para obtener el usuario de la sesión
@@ -25,28 +26,8 @@ public class SessionService {
         return (String) session.getAttribute("usuarioID");
     }
 
-    // Método para obtener el período de la sesión
-    public String getPeriodoID(HttpSession session) {
-        return (String) session.getAttribute("periodoID");
-    }
-
-    // Método para guardar dato del período de la sesión
-    public void setPeriodoID(HttpSession session, String periodoID) {
-        session.setAttribute("periodoID", periodoID);
-    }
-
-    // Método para eliminar los datos de la sesión
-    public void removeUserSession(HttpSession session) {
-        session.removeAttribute("usuarioID");
-        session.removeAttribute("periodoID");
-    }
-
-    // Método para verificar si un usuario está en sesión
-    public boolean isUserLoggedIn(HttpSession session) {
-        return session.getAttribute("usuarioID") != null; // Devuelve true si hay un usuario en sesión
-    }
-
-    public String getNombrePeriodo (HttpSession session) {
+    // Método para obtener el nombre del período de la sesión
+    public String getNombrePeriodo(HttpSession session) {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
@@ -66,5 +47,74 @@ public class SessionService {
         Periodo periodo = response.getBody();
 
         return periodo.getNombre();
+    }
+
+    // Método para obtener el período de la sesión
+    public String getPeriodoID(HttpSession session) {
+        String periodoID = (String) session.getAttribute("periodoID");
+        return periodoID != null ? periodoID : "Indefinido";
+    }
+
+    // Método para guardar dato del período de la sesión
+    public void setPeriodoID(HttpSession session, String periodoID) {
+        session.setAttribute("periodoID", periodoID);
+    }
+
+    // Método para obtener coordinacion de la sesión
+    public String getCoordinacion(HttpSession session) {
+        String coordinacion = (String) session.getAttribute("coordinacion");
+        return coordinacion != null ? coordinacion : "false";
+    }
+
+    // Método para guardar dato coordinacion de la sesión
+    public void setCoordinacion(HttpSession session, String coordinacion) {
+        session.setAttribute("coordinacion", coordinacion);
+    }
+
+    // Método para eliminar los datos de la sesión
+    public void removeUserSession(HttpSession session) {
+        session.removeAttribute("usuarioID");
+        session.removeAttribute("periodoID");
+        session.removeAttribute("coordinacion");
+        session.removeAttribute("org");
+        session.removeAttribute("primario");
+        session.removeAttribute("secundario");
+        session.removeAttribute("logo");
+    }
+
+    // Método para verificar si un usuario está en sesión
+    public boolean isUserLoggedIn(HttpSession session) {
+        return session.getAttribute("usuarioID") != null; // Devuelve true si hay un usuario en sesión
+    }
+
+
+    // PERSONALIZACION
+    public void setPersonalizacion(HttpSession session, String org, String primario, String secundario, String logo) {
+        System.out.println(org + ", " + primario +", " + secundario + ", " + logo);
+        session.setAttribute("org", org);
+        session.setAttribute("primario", primario);
+        session.setAttribute("secundario", secundario);
+        session.setAttribute("logo", logo);
+    }
+
+    public String getOrg(HttpSession session) {
+        String org = (String) session.getAttribute("org");
+        return org != null ? org : "Organización";
+
+    }
+
+    public String getPrimario(HttpSession session) {
+        String primario = (String) session.getAttribute("primario");
+        return primario != null ? primario : "#212529";
+    }
+
+    public String getSecundario(HttpSession session) {
+        String secundario = (String) session.getAttribute("secundario");
+        return secundario != null ? secundario : "#212529";
+    }
+
+    public String getLogo(HttpSession session) {
+        String logo = (String) session.getAttribute("logo");
+        return logo != null ? logo : "";
     }
 }

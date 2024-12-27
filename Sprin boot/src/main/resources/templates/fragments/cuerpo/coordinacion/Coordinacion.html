@@ -1,9 +1,9 @@
 <div th:fragment="content" class="row">
-    <div th:if="${coordinacion}" class="col-xl-4 col-md-4"
-         th:hx-post="@{/cabecera(url='coordinacion', titulo='Panel de coordinación')}"
+    <div class="col-xl-4 col-md-4"
+         th:hx-post="@{/cabecera(url='coordinacion/voluntarios', titulo='Voluntarios')}"
          hx-target="#Main" hx-swap="innerHTML">
         <div class="card bg-primary text-white mb-4">
-            <div class="card-body">Panel de coordinación</div>
+            <div class="card-body">Voluntarios</div>
             <div class="card-footer d-flex align-items-center justify-content-between">
                 <a class="small text-white stretched-link">Acceder</a>
                 <div class="small text-white">
@@ -16,7 +16,7 @@
          th:hx-post="@{/cabecera(url='actividades', titulo='Actividades')}"
          hx-target="#Main" hx-swap="innerHTML">
         <div class="card bg-danger text-white mb-4">
-            <div class="card-body">Actividades</div>
+            <div class="card-body">Periodos</div>
             <div class="card-footer d-flex align-items-center justify-content-between">
                 <a class="small text-white stretched-link">Acceder</a>
                 <div class="small text-white">
@@ -26,10 +26,10 @@
         </div>
     </div>
     <div class="col-xl-4 col-md-4"
-         th:hx-post="@{/cabecera(url='formaciones', titulo='Formaciones')}"
+         th:hx-post="@{/cabecera(url='coordinacion/personalizacion', titulo='Personalización')}"
          hx-target="#Main" hx-swap="innerHTML">
         <div class="card bg-success text-white mb-4">
-            <div class="card-body">Formaciones</div>
+            <div class="card-body">Personalización</div>
             <div class="card-footer d-flex align-items-center justify-content-between">
                 <a class="small text-white stretched-link">Acceder</a>
                 <div class="small text-white">

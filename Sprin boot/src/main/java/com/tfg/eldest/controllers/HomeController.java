@@ -19,7 +19,7 @@ public class HomeController {
 
     @GetMapping
     public String index(HttpSession session, Model model) {
-        sessionService.setSession(session, "1", "1");
+        sessionService.setSession(session, "1", "1","true");
         return "Base";
     }
 
@@ -30,10 +30,18 @@ public class HomeController {
         String nombreUsuario = sessionService.getUsuarioID(session);
         Boolean coordinacion = true; // TODO: Quitar el por defecto
         String nombrePeriodo = sessionService.getNombrePeriodo(session);
+        String primario = sessionService.getPrimario(session);
+        String secundario = sessionService.getSecundario(session);
+        String org = sessionService.getOrg(session);
+        String logo = sessionService.getLogo(session);
 
         model.addAttribute("usuario", nombreUsuario);
         model.addAttribute("periodo", nombrePeriodo);
         model.addAttribute("coordinacion", coordinacion);
+        model.addAttribute("primario", primario);
+        model.addAttribute("secundario", secundario);
+        model.addAttribute("org", org);
+        model.addAttribute("logo", logo);
         return "fragments/Body :: content";
     }
 
@@ -44,6 +52,10 @@ public class HomeController {
         String nombreUsuario = sessionService.getUsuarioID(session);
         Boolean coordinacion = true; // TODO: Quitar el por defecto
         String periodoID = (String) params.getOrDefault("periodo", "Indefinido");
+        String primario = sessionService.getPrimario(session);
+        String secundario = sessionService.getSecundario(session);
+        String org = sessionService.getOrg(session);
+        String logo = sessionService.getLogo(session);
 
         sessionService.setPeriodoID(session, periodoID);
         String nombrePeriodo = sessionService.getNombrePeriodo(session);
@@ -51,6 +63,10 @@ public class HomeController {
         model.addAttribute("usuario", nombreUsuario);
         model.addAttribute("periodo", nombrePeriodo);
         model.addAttribute("coordinacion", coordinacion);
+        model.addAttribute("primario", primario);
+        model.addAttribute("secundario", secundario);
+        model.addAttribute("org", org);
+        model.addAttribute("logo", logo);
         return "fragments/Body :: content";
     }
 
@@ -64,7 +80,8 @@ public class HomeController {
 
         model.addAttribute("url", url);
         model.addAttribute("titulo", titulo);
-        model.addAttribute("org", "Asociación Juvenil Aguazella");
+//        model.addAttribute("org", "Asociación Juvenil Aguazella");
+        model.addAttribute("org", sessionService.getOrg(session));
         model.addAttribute("id", id);
         return "fragments/Cabecera :: content";
     }

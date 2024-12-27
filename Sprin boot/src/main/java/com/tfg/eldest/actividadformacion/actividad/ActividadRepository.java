@@ -10,23 +10,27 @@ import java.util.Optional;
 
 @Repository
 public interface ActividadRepository extends JpaRepository<ActividadFormacion, Long> {
-    @Query("SELECT af FROM ActividadFormacion af " +
+    @Query("SELECT af " +
+            "FROM ActividadFormacion af " +
             "WHERE af.tipo = 'Actividad' " +
             "AND af.visible = true")
     List<ActividadFormacion> getActividadesVisibles();
 
-    @Query("SELECT af FROM ActividadFormacion af " +
+    @Query("SELECT af " +
+            "FROM ActividadFormacion af " +
             "WHERE af.tipo = 'Actividad' " +
             "AND af.visible = true " +
             "AND af.periodo.id = ?1")
     List<ActividadFormacion> getActividadesPorPeriodo(Long periodoId);
 
-    @Query("SELECT af FROM ActividadFormacion af " +
+    @Query("SELECT af " +
+            "FROM ActividadFormacion af " +
             "WHERE af.tipo = 'Actividad' " +
             "AND af.id = ?1")
     Optional<ActividadFormacion> findActividadById(Long actividadId);
 
-    @Query("SELECT af FROM ActividadFormacion af " +
+    @Query("SELECT af " +
+            "FROM ActividadFormacion af " +
             "WHERE af.tipo = 'Actividad' " +
             "AND af.visible = true " +
             "AND af.periodo.id = ?2 " +

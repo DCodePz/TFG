@@ -1,13 +1,12 @@
 package com.tfg.eldest.periodo;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tfg.eldest.actividadformacion.ActividadFormacion;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 import static java.lang.Boolean.TRUE;
@@ -16,28 +15,28 @@ import static java.lang.Boolean.TRUE;
 @Table
 public class Periodo {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String nombre;
     private LocalDate inicio;
     private LocalDate fin;
     private Boolean habilitado;
 
-//    @OneToMany(mappedBy = "periodo") // Nombre de la variable en ActividadFormacion
-//    @JsonIgnore
-//    private List<ActividadFormacion> actividadesformaciones;
+    @OneToMany(mappedBy = "periodo")
+    @JsonBackReference  // Evita la serialización circular
+    private Collection<ActividadFormacion> actividadesformaciones;
 
     public Periodo() {
     }
 
-    public Periodo(Long id, String nombre, LocalDate inicio, LocalDate fin) {
-        this.id = id;
+    public Periodo(String nombre, LocalDate inicio, LocalDate fin, Boolean habilitado) {
         this.nombre = nombre;
         this.inicio = inicio;
         this.fin = fin;
-        this.habilitado = TRUE;
-//        this.actividadesformaciones = actividadesformaciones;
+        this.habilitado = habilitado;
     }
-//    -- Getters y Setters --
+
+    //    -- Getters y Setters --
 
     public Long getId() {
         return id;
@@ -78,7 +77,16 @@ public class Periodo {
     public void setHabilitado(Boolean habilitado) {
         this.habilitado = habilitado;
     }
-//    -----------------------
+
+    public Collection<ActividadFormacion> getActividadesformaciones() {
+        return actividadesformaciones;
+    }
+
+    public void setActividadesformaciones(Collection<ActividadFormacion> actividadesformaciones) {
+        this.actividadesformaciones = actividadesformaciones;
+    }
+
+    //    -----------------------
 
     @Override
     public String toString() {
@@ -88,6 +96,7 @@ public class Periodo {
                 ", inicio=" + inicio +
                 ", fin=" + fin +
                 ", habilitado=" + habilitado +
+//                ", actividadesformaciones=" + actividadesformaciones +
                 '}';
     }
 }

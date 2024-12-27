@@ -1,10 +1,13 @@
 package com.tfg.eldest.actividadformacion;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.tfg.eldest.periodo.Periodo;
 import com.tfg.eldest.usuario.Usuario;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 
 import static java.lang.Boolean.TRUE;
@@ -13,6 +16,7 @@ import static java.lang.Boolean.TRUE;
 @Table
 public class ActividadFormacion {
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
     private String tipo;
     private String numero;
@@ -25,15 +29,19 @@ public class ActividadFormacion {
             joinColumns = @JoinColumn(name = "actividadformacion_id"),
             inverseJoinColumns = @JoinColumn(name = "usuario_id")
     )
-    private List<Usuario> encargados;
+    private Collection<Usuario> encargados;
 
     @ManyToMany
     @JoinTable(
             name = "actividadformacion_usuarios_participacion",
-            joinColumns = @JoinColumn(name = "actividadformacion_id"),
-            inverseJoinColumns = @JoinColumn(name = "usuario_id")
+            joinColumns = @JoinColumn(
+                    name = "actividadformacion_id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "usuario_id"
+            )
     )
-    private List<Usuario> participantes;
+    private Collection<Usuario> participantes;
 
     private Integer numVoluntarios;
     private Integer numParticipantes;
@@ -47,23 +55,22 @@ public class ActividadFormacion {
 
     @ManyToOne
     @JoinColumn(name = "periodo_id")
+    @JsonBackReference
     private Periodo periodo;
 
 
     public ActividadFormacion() {
     }
 
-    public ActividadFormacion(Long id, String tipo, String numero, String titulo, LocalDate fech_realiz, List<Usuario> encargados,
-                              List<Usuario> participantes, Integer numVoluntarios, Integer numParticipantes,
-                              String grupo_edad, Integer duracion, String objetivos, String materiales,
-                              String descripcion, String observaciones, Periodo periodo) {
-        this.id = id;
+    public ActividadFormacion(String tipo, String numero, String titulo, LocalDate fech_realiz, Collection<Usuario> encargados,
+                              Integer numVoluntarios, Integer numParticipantes, String grupo_edad, Integer duracion,
+                              String objetivos, String materiales, String descripcion, String observaciones,
+                              Boolean visible, Periodo periodo) {
         this.tipo = tipo;
         this.numero = numero;
         this.titulo = titulo;
         this.fech_realiz = fech_realiz;
         this.encargados = encargados;
-        this.participantes = participantes;
         this.numVoluntarios = numVoluntarios;
         this.numParticipantes = numParticipantes;
         this.grupo_edad = grupo_edad;
@@ -72,14 +79,14 @@ public class ActividadFormacion {
         this.materiales = materiales;
         this.descripcion = descripcion;
         this.observaciones = observaciones;
-        this.visible = TRUE;
+        this.visible = visible;
         this.periodo = periodo;
     }
 
-    public ActividadFormacion(String numero, String titulo, LocalDate fech_realiz, List<Usuario> encargados,
-                              Integer numVoluntarios, Integer numParticipantes,
-                              String grupo_edad, Integer duracion, String objetivos, String materiales,
-                              String descripcion, String observaciones, Periodo periodo) {
+    public ActividadFormacion(String numero, String titulo, LocalDate fech_realiz, Collection<Usuario> encargados,
+                              Integer numVoluntarios, Integer numParticipantes, String grupo_edad, Integer duracion,
+                              String objetivos, String materiales, String descripcion, String observaciones,
+                              Periodo periodo) {
         this.numero = numero;
         this.titulo = titulo;
         this.fech_realiz = fech_realiz;
@@ -137,19 +144,19 @@ public class ActividadFormacion {
         this.fech_realiz = fech_realiz;
     }
 
-    public List<Usuario> getEncargados() {
+    public Collection<Usuario> getEncargados() {
         return encargados;
     }
 
-    public void setEncargados(List<Usuario> encargados) {
+    public void setEncargados(Collection<Usuario> encargados) {
         this.encargados = encargados;
     }
 
-    public List<Usuario> getParticipantes() {
+    public Collection<Usuario> getParticipantes() {
         return participantes;
     }
 
-    public void setParticipantes(List<Usuario> participantes) {
+    public void setParticipantes(Collection<Usuario> participantes) {
         this.participantes = participantes;
     }
 
@@ -243,8 +250,8 @@ public class ActividadFormacion {
                 ", numero='" + numero + '\'' +
                 ", titulo='" + titulo + '\'' +
                 ", fech_realiz=" + fech_realiz +
-                ", encargados=" + encargados +
-                ", participantes=" + participantes +
+//                ", encargados=" + encargados +
+//                ", participantes=" + participantes +
                 ", numVoluntarios=" + numVoluntarios +
                 ", numParticipantes=" + numParticipantes +
                 ", grupo_edad='" + grupo_edad + '\'' +

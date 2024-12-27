@@ -53,7 +53,7 @@ public class ModalsController {
     @PostMapping(path = "actividad/eliminar")
     public String eliminarActividad(HttpSession session,
                                     @RequestParam Map<String, Object> params,
-                                 Model model) {
+                                    Model model) {
         String id = (String) params.getOrDefault("id", "");
         String titulo = (String) params.getOrDefault("titulo", "");
         model.addAttribute("idActividad", id);
@@ -70,5 +70,18 @@ public class ModalsController {
         model.addAttribute("idFormacion", id);
         model.addAttribute("titulo", titulo);
         return "fragments/modals/ModalesFormacion :: modalEliminarFormacion";
+    }
+
+    @PostMapping(path = "voluntario/in_habilitar")
+    public String in_hablitarVoluntario(HttpSession session,
+                                        @RequestParam Map<String, Object> params,
+                                        Model model) {
+        String id = (String) params.getOrDefault("id", "");
+        String nombre = (String) params.getOrDefault("nombre", "");
+        String accion = (String) params.getOrDefault("accion", "");
+        model.addAttribute("idVoluntario", id);
+        model.addAttribute("nombre", nombre);
+        model.addAttribute("accion", accion);
+        return "fragments/modals/ModalesVoluntarios :: modalIn_HabilitarVoluntario";
     }
 }

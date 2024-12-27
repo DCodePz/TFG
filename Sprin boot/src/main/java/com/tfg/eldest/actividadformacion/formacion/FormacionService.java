@@ -1,6 +1,7 @@
 package com.tfg.eldest.actividadformacion.formacion;
 
 import com.tfg.eldest.actividadformacion.ActividadFormacion;
+import com.tfg.eldest.periodo.PeriodoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +13,12 @@ import java.util.Optional;
 @Service
 public class FormacionService {
     private final FormacionRepository formacionRepository;
+    private final PeriodoRepository periodoRepository;
 
     @Autowired
-    public FormacionService(FormacionRepository formacionRepository) {
+    public FormacionService(FormacionRepository formacionRepository, PeriodoRepository periodoRepository) {
         this.formacionRepository = formacionRepository;
+        this.periodoRepository = periodoRepository;
     }
 
     public List<ActividadFormacion> getFormaciones() {
@@ -37,17 +40,47 @@ public class FormacionService {
     }
 
     // TODO: Revisar restricciones de campos que haya que comprobar
-    public void crearFormacion(ActividadFormacion formacion) {
-        if (formacion.getTitulo().isEmpty() || formacion.getEncargados().isEmpty()
-                || formacion.getGrupo_edad().isEmpty() || formacion.getObjetivos().isEmpty()
-                || formacion.getMateriales().isEmpty() || formacion.getDescripcion().isEmpty()
-                || formacion.getObservaciones().isEmpty()) {
-            throw new IllegalStateException("Algun campo es vacio");
+    public void crearFormacion(ActividadFormacion formacion, Long periodoId) {
+        if (formacion.getNumero() == null || formacion.getNumero().isEmpty()) {
+            throw new IllegalStateException("Campo número vacio");
+        }
+        if (formacion.getTitulo() == null || formacion.getTitulo().isEmpty()) {
+            throw new IllegalStateException("Campo título es vacio");
+        }
+        if (formacion.getFech_realiz() == null) {
+            throw new IllegalStateException("Fampo fecha es vacio");
+        }
+        if (formacion.getEncargados() == null || formacion.getEncargados().isEmpty()) {
+            throw new IllegalStateException("Campo encargados es vacio");
+        }
+        if (formacion.getNumVoluntarios() == null) {
+            throw new IllegalStateException("Campo numvoluntarios es vacio");
+        }
+        if (formacion.getNumParticipantes() == null) {
+            throw new IllegalStateException("Campo numparticipantes es vacio");
+        }
+        if (formacion.getGrupo_edad() == null || formacion.getGrupo_edad().isEmpty()) {
+            throw new IllegalStateException("Campo grupoedad es vacio");
+        }
+        if (formacion.getDuracion() == null) {
+            throw new IllegalStateException("Campo duración es vacio");
+        }
+        if (formacion.getObjetivos() == null || formacion.getObjetivos().isEmpty()) {
+            throw new IllegalStateException("Campo objetivos es vacio");
+        }
+        if (formacion.getMateriales() == null || formacion.getMateriales().isEmpty()) {
+            throw new IllegalStateException("Campo materiales es vacio");
+        }
+        if (formacion.getDescripcion() == null || formacion.getDescripcion().isEmpty()) {
+            throw new IllegalStateException("Campo descripción es vacio");
+        }
+        if (formacion.getObservaciones() == null || formacion.getObservaciones().isEmpty()) {
+            throw new IllegalStateException("Campo observaciones es vacio");
         }
 
-        formacion.setId(formacionRepository.count()+1);
         formacion.setTipo("Formacion");
         formacion.setVisible(Boolean.TRUE);
+        formacion.setPeriodo(periodoRepository.findById(periodoId).get());
         formacionRepository.save(formacion);
     }
 
@@ -59,62 +92,67 @@ public class FormacionService {
     }
 
     @Transactional
-    public void guardarFormacion(Long formacionId, ActividadFormacion actividadModificada) {
+    public void guardarFormacion(Long formacionId, ActividadFormacion formacionModificada) {
         ActividadFormacion formacion = getFormacion(formacionId);
 
-        if (actividadModificada.getTitulo() != null && !actividadModificada.getTitulo().isEmpty()
-                && !Objects.equals(formacion.getTitulo(), actividadModificada.getTitulo())) {
-            formacion.setTitulo(actividadModificada.getTitulo());
+        if (formacionModificada.getNumero() != null && !formacionModificada.getNumero().isEmpty()
+                && !Objects.equals(formacion.getNumero(), formacionModificada.getNumero())) {
+            formacion.setNumero(formacionModificada.getNumero());
         }
 
-        if (actividadModificada.getFech_realiz() != null
-                && !Objects.equals(formacion.getFech_realiz(), actividadModificada.getFech_realiz())) {
-            formacion.setFech_realiz(actividadModificada.getFech_realiz());
+        if (formacionModificada.getTitulo() != null && !formacionModificada.getTitulo().isEmpty()
+                && !Objects.equals(formacion.getTitulo(), formacionModificada.getTitulo())) {
+            formacion.setTitulo(formacionModificada.getTitulo());
         }
 
-        if (actividadModificada.getEncargados() != null && !actividadModificada.getEncargados().isEmpty()
-                && !Objects.equals(formacion.getEncargados(), actividadModificada.getEncargados())) {
-            formacion.setEncargados(actividadModificada.getEncargados());
+        if (formacionModificada.getFech_realiz() != null
+                && !Objects.equals(formacion.getFech_realiz(), formacionModificada.getFech_realiz())) {
+            formacion.setFech_realiz(formacionModificada.getFech_realiz());
         }
 
-        if (actividadModificada.getNumVoluntarios() != null
-                && !Objects.equals(formacion.getNumVoluntarios(), actividadModificada.getNumVoluntarios())) {
-            formacion.setNumVoluntarios(actividadModificada.getNumVoluntarios());
+        if (formacionModificada.getEncargados() != null && !formacionModificada.getEncargados().isEmpty()
+                && !Objects.equals(formacion.getEncargados(), formacionModificada.getEncargados())) {
+            formacion.setEncargados(formacionModificada.getEncargados());
         }
 
-        if (actividadModificada.getNumParticipantes() != null
-                && !Objects.equals(formacion.getNumParticipantes(), actividadModificada.getNumParticipantes())) {
-            formacion.setNumParticipantes(actividadModificada.getNumParticipantes());
+        if (formacionModificada.getNumVoluntarios() != null
+                && !Objects.equals(formacion.getNumVoluntarios(), formacionModificada.getNumVoluntarios())) {
+            formacion.setNumVoluntarios(formacionModificada.getNumVoluntarios());
         }
 
-        if (actividadModificada.getGrupo_edad() != null && !actividadModificada.getGrupo_edad().isEmpty()
-                && !Objects.equals(formacion.getGrupo_edad(), actividadModificada.getGrupo_edad())) {
-            formacion.setGrupo_edad(actividadModificada.getGrupo_edad());
+        if (formacionModificada.getNumParticipantes() != null
+                && !Objects.equals(formacion.getNumParticipantes(), formacionModificada.getNumParticipantes())) {
+            formacion.setNumParticipantes(formacionModificada.getNumParticipantes());
         }
 
-        if (actividadModificada.getDuracion() != null
-                && !Objects.equals(formacion.getDuracion(), actividadModificada.getDuracion())) {
-            formacion.setDuracion(actividadModificada.getDuracion());
+        if (formacionModificada.getGrupo_edad() != null && !formacionModificada.getGrupo_edad().isEmpty()
+                && !Objects.equals(formacion.getGrupo_edad(), formacionModificada.getGrupo_edad())) {
+            formacion.setGrupo_edad(formacionModificada.getGrupo_edad());
         }
 
-        if (actividadModificada.getObjetivos() != null && !actividadModificada.getObjetivos().isEmpty()
-                && !Objects.equals(formacion.getObjetivos(), actividadModificada.getObjetivos())) {
-            formacion.setObjetivos(actividadModificada.getObjetivos());
+        if (formacionModificada.getDuracion() != null
+                && !Objects.equals(formacion.getDuracion(), formacionModificada.getDuracion())) {
+            formacion.setDuracion(formacionModificada.getDuracion());
         }
 
-        if (actividadModificada.getMateriales() != null && !actividadModificada.getMateriales().isEmpty()
-                && !Objects.equals(formacion.getMateriales(), actividadModificada.getMateriales())) {
-            formacion.setMateriales(actividadModificada.getMateriales());
+        if (formacionModificada.getObjetivos() != null && !formacionModificada.getObjetivos().isEmpty()
+                && !Objects.equals(formacion.getObjetivos(), formacionModificada.getObjetivos())) {
+            formacion.setObjetivos(formacionModificada.getObjetivos());
         }
 
-        if (actividadModificada.getDescripcion() != null && !actividadModificada.getDescripcion().isEmpty()
-                && !Objects.equals(formacion.getDescripcion(), actividadModificada.getDescripcion())) {
-            formacion.setDescripcion(actividadModificada.getDescripcion());
+        if (formacionModificada.getMateriales() != null && !formacionModificada.getMateriales().isEmpty()
+                && !Objects.equals(formacion.getMateriales(), formacionModificada.getMateriales())) {
+            formacion.setMateriales(formacionModificada.getMateriales());
         }
 
-        if (actividadModificada.getObservaciones() != null && !actividadModificada.getObservaciones().isEmpty()
-                && !Objects.equals(formacion.getObservaciones(), actividadModificada.getObservaciones())) {
-            formacion.setObservaciones(actividadModificada.getObservaciones());
+        if (formacionModificada.getDescripcion() != null && !formacionModificada.getDescripcion().isEmpty()
+                && !Objects.equals(formacion.getDescripcion(), formacionModificada.getDescripcion())) {
+            formacion.setDescripcion(formacionModificada.getDescripcion());
+        }
+
+        if (formacionModificada.getObservaciones() != null && !formacionModificada.getObservaciones().isEmpty()
+                && !Objects.equals(formacion.getObservaciones(), formacionModificada.getObservaciones())) {
+            formacion.setObservaciones(formacionModificada.getObservaciones());
         }
     }
 

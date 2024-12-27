@@ -66,9 +66,9 @@
                     <td th:text="${formacion.titulo}">Nombre</td>
                     <td th:text="${formacion.grupo_edad}">Grupo de edad</td>
                     <td>
-                        <span th:each="encargado : ${formacion.encargados}"
-                              th:text="${encargado.id} + ', '">
-                        </span>
+                        <div th:each="encargado : ${formacion.encargados}">
+                            <span th:text="${encargado.id} + ' - ' + ${encargado.nombre} + ' ' + ${encargado.apellidos}"></span>
+                        </div>
                     </td>
                     <td class="text-end"
                         th:hx-post="@{/cabecera(url='formaciones/editar', titulo='Editar Formación', id=${formacion.id})}"

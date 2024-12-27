@@ -1,6 +1,7 @@
 package com.tfg.eldest.controllers;
 
 import com.tfg.eldest.actividadformacion.ActividadFormacion;
+import com.tfg.eldest.rol.Rol;
 import com.tfg.eldest.usuario.Usuario;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,12 +55,34 @@ public class CuerpoController {
         return usuarios;
     }
 
+    private List<Rol> obtenerRoles(){
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/roles";
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<List<Rol>> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Rol>>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        List<Rol> roles = response.getBody();
+
+        return roles;
+    }
+
     //    PANEL DE CONTROL
     @PostMapping(path = "paneldecontrol")
     public String PanelDeControl(HttpSession session,
                                  @RequestParam Map<String, Object> params,
                                  Model model) {
-        Boolean coordinacion = true; // TODO: Quitar el por defecto
+        Boolean coordinacion = Boolean.valueOf(sessionService.getCoordinacion(session)); //TODO: Evitar esto
 
         model.addAttribute("coordinacion", coordinacion);
         return "fragments/cuerpo/PanelDeControl :: content";
@@ -70,7 +94,148 @@ public class CuerpoController {
                                  @RequestParam Map<String, Object> params,
                                  Model model) {
 
-        return "fragments/cuerpo/Coordinacion :: content";
+        return "fragments/cuerpo/coordinacion/Coordinacion :: content";
+    }
+
+    @PostMapping(path = "coordinacion/personalizacion")
+    public String Personalizacion(HttpSession session,
+                               @RequestParam Map<String, Object> params,
+                               Model model) {
+
+        return "fragments/cuerpo/coordinacion/personalizacion/Personalizacion :: content";
+    }
+
+    @PostMapping(path = "coordinacion/voluntarios")
+    public String Voluntarios(HttpSession session,
+                              @RequestParam Map<String, Object> params,
+                              Model model) {
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/usuarios/voluntarios";
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<List<Usuario>> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Usuario>>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        List<Usuario> voluntarios = response.getBody();
+
+        model.addAttribute("voluntarios", voluntarios);
+        return "fragments/cuerpo/coordinacion/voluntarios/Voluntarios :: content";
+    }
+
+    @PostMapping(path = "coordinacion/voluntarios/nuevo")
+    public String NuevoVoluntario(HttpSession session,
+                                 @RequestParam Map<String, Object> params,
+                                 Model model) {
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/roles";
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<List<Rol>> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Rol>>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        List<Rol> roles = response.getBody();
+
+        model.addAttribute("roles", roles);
+        return "fragments/cuerpo/coordinacion/voluntarios/NuevoVoluntario :: content";
+    }
+
+    @PostMapping(path = "coordinacion/voluntarios/editar")
+    public String EditarVoluntario(HttpSession session,
+                                  @RequestParam Map<String, Object> params,
+                                  Model model) {
+        String voluntarioID = (String) params.getOrDefault("id", null);
+
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/usuarios/" + voluntarioID;
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<Usuario> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Usuario>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        Usuario voluntario = response.getBody();
+
+        model.addAttribute("voluntario", voluntario);
+
+        // Procesamos los roles
+        List<Rol> todosRoles = obtenerRoles();
+        Map<Map<String, String>, Boolean> roles = new HashMap<>();
+
+        for (Rol rol : todosRoles) {
+            Boolean encontrado = FALSE;
+            for (Rol buscar : voluntario.getRoles()) {
+                if (rol.getId().equals(buscar.getId())) {
+                    encontrado = TRUE;
+                    break;
+                }
+            }
+
+            Map <String, String> tmp = new HashMap<>();
+            tmp.put(rol.getId().toString(), rol.getNombre());
+            roles.put(tmp, encontrado);
+        }
+
+        System.out.println(voluntario);
+        System.out.println(roles);
+
+        model.addAttribute("roles", roles);
+        return "fragments/cuerpo/coordinacion/voluntarios/InfoVoluntario :: content";
+    }
+
+    @PostMapping(path = "coordinacion/voluntarios/in_habilitar")
+    public String in_habilitarVoluntario(HttpSession session,
+                                         @RequestParam Map<String, Object> params,
+                                         Model model) {
+        String voluntarioID = (String) params.getOrDefault("id", null);
+
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/usuarios/invertirHabilitado/" + voluntarioID;
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<Void> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.PUT,
+                null,
+                Void.class
+        );
+
+        // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Actividad creada exitosamente");
+        } else {
+            System.out.println("Error al crear la actividad: " + response.getStatusCode());
+        }
+
+        return Voluntarios(session, params, model);
     }
 
     //    ACTIVIDADES

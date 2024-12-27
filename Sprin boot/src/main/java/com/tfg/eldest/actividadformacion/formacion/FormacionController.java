@@ -40,9 +40,9 @@ public class FormacionController {
     }
 
     // POST
-    @PostMapping(path = "crear")
-    public void crearFormacion(@RequestBody ActividadFormacion formacion) {
-        formacionService.crearFormacion(formacion);
+    @PostMapping(path = "crear/{periodoId}")
+    public void crearFormacion(@PathVariable Long periodoId, @RequestBody ActividadFormacion formacion) {
+        formacionService.crearFormacion(formacion, periodoId);
     }
 
     // PUT

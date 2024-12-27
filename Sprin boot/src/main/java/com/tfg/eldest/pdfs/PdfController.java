@@ -1,6 +1,7 @@
 package com.tfg.eldest.pdfs;
 
 import com.tfg.eldest.actividadformacion.ActividadFormacion;
+import com.tfg.eldest.periodo.Periodo;
 import com.tfg.eldest.usuario.Usuario;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Value;
@@ -29,11 +30,30 @@ public class PdfController {
         this.pdfService = pdfService;
     }
 
-    private ActividadFormacion obtenerActividadFormacion(String tipo, Long id) {
+    private Periodo obtenerPeriodo(Long id) {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
-        System.out.println(tipo + ", " + id);
+        String apiUrl = this.apiUrl + "/periodo/" + id;
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<Periodo> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Periodo>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        Periodo periodo = response.getBody();
+
+        return periodo;
+    }
+
+    private ActividadFormacion obtenerActividadFormacion(String tipo, Long id) {
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
 
         String apiUrl = this.apiUrl;
         if (tipo.equals("Actividad")) {
@@ -61,9 +81,11 @@ public class PdfController {
     }
 
     @GetMapping("generar/{tipo}/{id}")
-    public void generatePdf(@PathVariable String tipo, @PathVariable Long id, HttpServletResponse response) throws IOException {
+    public void generatePdf(@PathVariable String tipo, @PathVariable Long id,
+                            HttpServletResponse response) throws IOException {
         // Obtener la actividad de formación
         ActividadFormacion actividad = obtenerActividadFormacion(tipo, id);
+        System.out.println(actividad);
 
         // Formatear los encargados y participantes como una cadena HTML
         String encargadosHtml = actividad.getEncargados().stream()

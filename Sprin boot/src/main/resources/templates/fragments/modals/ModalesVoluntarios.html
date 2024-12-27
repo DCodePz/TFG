@@ -1,0 +1,25 @@
+<div th:fragment="modalIn_HabilitarVoluntario" class="modal fade" th:id="'modalIn_HabilitarVoluntario' + ${idVoluntario}" tabindex="-1"
+     aria-labelledby="modalIn_HabilitarVoluntario" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="modalIn_HabilitarVoluntario">Confirmar eliminación</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <!-- Mensaje de advertencia -->
+                <p th:text="'¿Estás seguro de que deseas ' + ${accion} + ' este voluntario?'"></p>
+                <p>"<strong><span th:text="${nombre}"></span></strong>"</p>
+            </div>
+            <div class="modal-footer">
+                <!-- Botón para cancelar -->
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <!-- Botón para confirmar la eliminación -->
+                <button type="button" class="btn btn-danger" id="confirmarEliminarBtn"
+                        th:hx-post="@{/cabecera(url='coordinacion/voluntarios/in_habilitar', titulo='Voluntarios', id=${idVoluntario})}"
+                        hx-target="#Main" hx-swap="innerHTML"
+                        data-bs-dismiss="modal">Cambiar</button>
+            </div>
+        </div>
+    </div>
+</div>

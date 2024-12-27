@@ -88,11 +88,13 @@ public class FormacionesController {
     public String Crear(HttpSession session,
                         @RequestParam Map<String, Object> params,
                         Model model) {
+        String periodoID = sessionService.getPeriodoID(session);
+
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
         // URL de la API que devuelve las formaciones
-        String apiUrl = this.apiUrl + "/formaciones/crear";
+        String apiUrl = this.apiUrl + "/formaciones/crear/" + periodoID;
 
         String grupo_edad = "";
         if (params.get("pequeños_pequeños") != null && !params.get("pequeños_pequeños").equals("")) {

@@ -1,5 +1,6 @@
 package com.tfg.eldest.usuario;
 
+import com.tfg.eldest.actividadformacion.ActividadFormacion;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +25,16 @@ public class UsuarioController {
     @GetMapping(path = "{usuarioId}")
     public Usuario getUsuario(@PathVariable Long usuarioId) {
         return usuarioService.getUsuario(usuarioId);
+    }
+
+    @GetMapping(path = "voluntarios")
+    public List<Usuario> getVoluntarios() {
+        return usuarioService.getVoluntarios();
+    }
+
+    @GetMapping(path = "voluntarios/buscar/{infoBuscar}")
+    public List<Usuario> getVoluntariosBusqueda(@PathVariable String infoBuscar) {
+        return usuarioService.getVoluntariosBusqueda(infoBuscar);
     }
 
     // POST

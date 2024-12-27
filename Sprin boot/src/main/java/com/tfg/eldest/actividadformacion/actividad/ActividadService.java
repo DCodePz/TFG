@@ -1,6 +1,8 @@
 package com.tfg.eldest.actividadformacion.actividad;
 
 import com.tfg.eldest.actividadformacion.ActividadFormacion;
+import com.tfg.eldest.periodo.PeriodoController;
+import com.tfg.eldest.periodo.PeriodoRepository;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,10 +14,12 @@ import java.util.Optional;
 @Service
 public class ActividadService {
     private final ActividadRepository actividadRepository;
+    private final PeriodoRepository periodoRepository;
 
     @Autowired
-    public ActividadService(ActividadRepository actividadRepository) {
+    public ActividadService(ActividadRepository actividadRepository, PeriodoRepository periodoRepository, PeriodoController periodoController) {
         this.actividadRepository = actividadRepository;
+        this.periodoRepository = periodoRepository;
     }
 
     public List<ActividadFormacion> getActividades() {
@@ -37,20 +41,47 @@ public class ActividadService {
     }
 
     // TODO: Revisar restricciones de campos que haya que comprobar
-    public void crearActividad(ActividadFormacion actividad) {
-        if (actividad.getTitulo()==null || actividad.getTitulo().isEmpty()
-                || actividad.getEncargados()==null || actividad.getEncargados().isEmpty()
-                || actividad.getGrupo_edad()==null || actividad.getGrupo_edad().isEmpty()
-                || actividad.getObjetivos()==null || actividad.getObjetivos().isEmpty()
-                || actividad.getMateriales()==null || actividad.getMateriales().isEmpty()
-                || actividad.getDescripcion()==null || actividad.getDescripcion().isEmpty()
-                || actividad.getObservaciones()==null || actividad.getObservaciones().isEmpty()) {
-            throw new IllegalStateException("Algún campo es vacio");
+    public void crearActividad(ActividadFormacion actividad, Long periodoId) {
+        if (actividad.getNumero() == null || actividad.getNumero().isEmpty()) {
+            throw new IllegalStateException("Campo número vacio");
+        }
+        if (actividad.getTitulo() == null || actividad.getTitulo().isEmpty()) {
+            throw new IllegalStateException("Campo título es vacio");
+        }
+        if (actividad.getFech_realiz() == null) {
+            throw new IllegalStateException("Fampo fecha es vacio");
+        }
+        if (actividad.getEncargados() == null || actividad.getEncargados().isEmpty()) {
+            throw new IllegalStateException("Campo encargados es vacio");
+        }
+        if (actividad.getNumVoluntarios() == null) {
+            throw new IllegalStateException("Campo numvoluntarios es vacio");
+        }
+        if (actividad.getNumParticipantes() == null) {
+            throw new IllegalStateException("Campo numparticipantes es vacio");
+        }
+        if (actividad.getGrupo_edad() == null || actividad.getGrupo_edad().isEmpty()) {
+            throw new IllegalStateException("Campo grupoedad es vacio");
+        }
+        if (actividad.getDuracion() == null) {
+            throw new IllegalStateException("Campo duración es vacio");
+        }
+        if (actividad.getObjetivos() == null || actividad.getObjetivos().isEmpty()) {
+            throw new IllegalStateException("Campo objetivos es vacio");
+        }
+        if (actividad.getMateriales() == null || actividad.getMateriales().isEmpty()) {
+            throw new IllegalStateException("Campo materiales es vacio");
+        }
+        if (actividad.getDescripcion() == null || actividad.getDescripcion().isEmpty()) {
+            throw new IllegalStateException("Campo descripción es vacio");
+        }
+        if (actividad.getObservaciones() == null || actividad.getObservaciones().isEmpty()) {
+            throw new IllegalStateException("Campo observaciones es vacio");
         }
 
-        actividad.setId(actividadRepository.count()+1);
         actividad.setTipo("Actividad");
         actividad.setVisible(Boolean.TRUE);
+        actividad.setPeriodo(periodoRepository.findById(periodoId).get());
         actividadRepository.save(actividad);
     }
 

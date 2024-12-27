@@ -1,0 +1,105 @@
+<div th:fragment="content" class="container-fluid px-4">
+    <div class="card mb-4">
+        <div class="card-body">
+            <!-- Contenido -->
+            <form id="formulario"
+                  th:hx-post="@{/coordinacion/voluntarios/crear(url='coordinacion/voluntarios', tit='Voluntarios')}"
+                  hx-trigger="submit" hx-target="#Main" hx-swap="innerHTML">
+                <!-- Fila 1 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="id" class="form-label fw-bold">ID</label>
+                        <input type="number" class="form-control" id="id" name="id" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="email" class="form-label fw-bold">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                </div>
+
+                <!-- Fila 2 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="nombre" class="form-label fw-bold">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="apellidos" class="form-label fw-bold">Apellidos</label>
+                        <input type="text" class="form-control" id="apellidos" name="apellidos" required>
+                    </div>
+                </div>
+
+                <!-- Fila 3 -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="password" class="form-label fw-bold">Contraseña</label>
+                        <div class="input-group">
+                            <button type="button" class="btn btn-outline-secondary" id="generatePasswordBtn">Generar Contraseña</button>
+                            <input type="text" class="form-control" id="password" name="password" readonly required>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label class="form-label fw-bold">Roles</label>
+                        <div class="dropdown">
+                            <button class="btn btn-outline-primary dropdown-toggle text-start" type="button"
+                                    style="width: 100%;" id="dropdownRoles" data-bs-toggle="dropdown"
+                                    aria-expanded="false">
+                                Seleccionar roles
+                            </button>
+                            <ul class="dropdown-menu" aria-labelledby="dropdownRoles" style="width: 100%;">
+                                <li class="py-1 px-3" th:each="rol: ${roles}">
+                                    <input class="form-check-input" type="checkbox" th:value="${rol.nombre}"
+                                           th:id="'rol ' + ${rol.id}" th:name="'rol ' + ${rol.id}"/>
+                                    <label class="form-check-label ms-2" th:for="'rol ' + ${rol.id}">
+                                        <span th:text="${rol.nombre}"></span>
+                                    </label>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-start gap-2">
+                    <button id="cancelar" type="button" class="btn btn-danger"
+                            th:hx-post="@{/cabecera(url='coordinacion/voluntarios', titulo='Voluntarios')}"
+                            hx-target="#Main" hx-swap="innerHTML">
+                        Cancelar
+                    </button>
+                    <button id="guardar" type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        $(document).ready(function() {
+            // Función para generar una contraseña aleatoria si no está generada al guardar
+            $('#guardar').click(function() {
+                // Comprobamos si el campo de contraseña está vacío
+                if ($('#password').val() === '') {
+                    const password = generateRandomPassword();
+                    $('#password').val(password); // Establece la contraseña generada
+                }
+            });
+
+            // Función para generar una contraseña aleatoria al hacer clic en el botón de generar
+            $('#generatePasswordBtn').click(function() {
+                const password = generateRandomPassword();
+                $('#password').val(password); // Establece la contraseña generada
+            });
+
+            // Función para generar una contraseña aleatoria de 12 caracteres
+            function generateRandomPassword() {
+                const charset = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!@#$%^&*()_+";
+                let password = '';
+                for (let i = 0; i < 12; i++) {
+                    const randomIndex = Math.floor(Math.random() * charset.length);
+                    password += charset[randomIndex];
+                }
+                return password;
+            }
+        });
+    </script>
+</div>

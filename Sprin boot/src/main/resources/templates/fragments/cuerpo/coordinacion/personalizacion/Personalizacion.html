@@ -1,0 +1,86 @@
+<div th:fragment="content" class="container-fluid px-4">
+    <div class="card mb-4">
+        <div class="card-body">
+            <!-- Formulario -->
+            <form id="formulario"
+                  th:hx-post="@{/coordinacion/personalizacion/cambiar}"
+                  hx-trigger="submit" hx-target="#Main" hx-swap="innerHTML">
+
+                <!-- Fila 1: Nombre de la organización -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="org" class="form-label fw-bold">Nombre de la organización</label>
+                        <input type="text" class="form-control" id="org" name="org" placeholder="Nombre de la organización">
+                    </div>
+                </div>
+
+                <!-- Fila 2: Colores de la asociación -->
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="primario" class="form-label fw-bold">Color principal de la asociación</label>
+                        <div class="d-flex align-items-center">
+                            <div class="color-preview" id="previewColorPrincipal" style="width: 30px; height: 30px; margin-right: 10px; border: 1px solid #ddd;"></div>
+                            <input type="text" class="form-control" id="primario" name="primario" placeholder="#135196">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <label for="secundario" class="form-label fw-bold">Color secundario de la asociación</label>
+                        <div class="d-flex align-items-center">
+                            <div class="color-preview" id="previewColorSecundario" style="width: 30px; height: 30px; margin-right: 10px; border: 1px solid #ddd;"></div>
+                            <input type="text" class="form-control" id="secundario" name="secundario" placeholder="#FFD700" maxlength="7">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Fila 3: Logo de la asociación -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="logo" class="form-label fw-bold">Logo de la asociación</label>
+                        <div class="d-flex align-items-center">
+                            <img id="previewLogo" src="#" alt="Vista previa" style="width: 50px; height: 50px; margin-right: 10px; display: none;">
+                            <input type="file" class="form-control" id="logo" name="logo" accept="image/*">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="d-flex justify-content-start gap-2">
+                    <button id="cancelar" type="button" class="btn btn-danger"
+                            th:hx-post="@{/cabecera(url='coordinacion', titulo='Coordinación')}"
+                            hx-target="#Main" hx-swap="innerHTML">
+                        Cancelar
+                    </button>
+                    <button id="guardar" type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+
+    <script>
+        $(document).ready(function() {
+            // Actualizar la vista previa del color principal
+            $('#primario').on('input', function() {
+                $('#previewColorPrincipal').css('background-color', $(this).val());
+            });
+
+            // Actualizar la vista previa del color secundario
+            $('#secundario').on('input', function() {
+                $('#previewColorSecundario').css('background-color', $(this).val());
+            });
+
+            // Mostrar la vista previa del logo
+            $('#logo').on('change', function(event) {
+                const file = event.target.files[0];
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    $('#previewLogo').attr('src', e.target.result).show();
+                };
+
+                if (file) {
+                    reader.readAsDataURL(file);
+                }
+            });
+        });
+    </script>
+</div>

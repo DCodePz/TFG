@@ -4,7 +4,7 @@
             <!-- Barra de búsqueda a la izquierda -->
             <div class="me-auto">
                 <form class="d-none d-md-inline-block form-inline my-2 my-md-0"
-                      th:hx-post="@{/actividades/buscar}"
+                      th:hx-post="@{/coordinacion/voluntarios/buscar}"
                       hx-trigger="submit" hx-target="#Cuerpo" hx-swap="innerHTML">
                     <div class="input-group">
                         <input
@@ -27,10 +27,10 @@
             <!-- Enlaces a la derecha -->
             <div class="d-flex text-end align-items-center">
                 <a class="nav-link me-3"
-                   th:hx-post="@{/cabecera(url='actividades/nueva', titulo='Nueva Actividad')}"
+                   th:hx-post="@{/cabecera(url='coordinacion/voluntarios/nuevo', titulo='Nuevo Voluntario')}"
                    hx-target="#Main" hx-swap="innerHTML">
                     <i class="fas fa-add me-1"></i>
-                    Nueva actividad
+                    Nuevo voluntario
                 </a>
                 <a class="nav-link me-3" hidden="hidden">
                     <i class="fas fa-print me-1"></i>
@@ -39,41 +39,37 @@
             </div>
         </div>
         <div class="card-body">
-            <table id="tablaActividades" class="table table-striped table-bordered">
+            <table id="tablaVoluntarios" class="table table-striped table-bordered">
                 <colgroup>
                     <col style="width: 10%;">  <!-- Primera columna -->
                     <col style="width: 35%;"> <!-- Segunda columna -->
                     <col style="width: 20%;"> <!-- Tercera columna -->
-                    <col style="width: 35%;"> <!-- Cuarta  columna -->
-                    <col style="width: 10%;"> <!-- Columna de acciones -->
-                    <col style="width: 10%;"> <!-- Columna de acciones -->
+                    <col style="width: 15%;"> <!-- Cuarta  columna -->
                     <col style="width: 10%;"> <!-- Columna de acciones -->
                     <col style="width: 10%;"> <!-- Columna de acciones -->
                 </colgroup>
                 <thead>
                 <tr>
-                    <th scope="col">Nº Actividad</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Fecha realización</th>
-                    <th scope="col">Encargados</th>
+                    <th scope="col">Id Voluntario</th>
+                    <th scope="col">Nombre y apellidos</th>
+                    <th scope="col">Roles</th>
+                    <th scope="col">Habilitado</th>
                     <th><em>Editar</em></th>
-                    <th><em>Eliminar</em></th>
-                    <th><em>Evaluar</em></th>
-                    <th><em>Imprimir</em></th>
+                    <th><em>(In)Hab.</em></th>
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="actividad : ${actividades}">
-                    <td th:text="${actividad.numero}">Nº Actividad</td>
-                    <td th:text="${actividad.titulo}">Nombre</td>
-                    <td th:text="${actividad.fech_realiz}">Fecha realización</td>
+                <tr th:each="voluntario : ${voluntarios}">
+                    <td th:text="${voluntario.id}">Id Voluntario</td>
+                    <td th:text="${voluntario.nombre} + ' ' + ${voluntario.apellidos}">Nombre y apellidos</td>
                     <td>
-                        <div th:each="encargado : ${actividad.encargados}">
-                            <span th:text="${encargado.id} + ' - ' + ${encargado.nombre} + ' ' + ${encargado.apellidos}"></span>
+                        <div th:each="rol : ${voluntario.roles}">
+                            <span th:text="${rol.nombre}"></span>
                         </div>
                     </td>
+                    <td th:text="${voluntario.habilitado ? 'Sí' : 'No'}">Habilitado</td>
                     <td class="text-end"
-                        th:hx-post="@{/cabecera(url='actividades/editar', titulo='Editar Actividad', id=${actividad.id})}"
+                        th:hx-post="@{/cabecera(url='coordinacion/voluntarios/editar', titulo='Editar Voluntario', id=${voluntario.id})}"
                         hx-target="#Main" hx-swap="innerHTML">
                         <a class="nav-link me-3">
                             <i class="fas fa-pencil me-1"></i>
@@ -81,43 +77,31 @@
                     </td>
                     <td class="text-end">
                         <a class="nav-link me-3" data-bs-toggle="modal"
-                           th:data-bs-target="'#modalEliminarActividad' + ${actividad.id}">
-                            <i class="fas fa-trash me-1"></i>
+                           th:data-bs-target="'#modalIn_HabilitarVoluntario' + ${voluntario.id}">
+                            <!-- Icono de check si habilitado es true -->
+                            <i class="fas fa-check me-1" th:if="${voluntario.habilitado}"></i>
+                            <!-- Icono de cruz si habilitado es false -->
+                            <i class="fas fa-times me-1" th:if="${!voluntario.habilitado}"></i>
                         </a>
 
                         <!-- Modal -->
-                        <div th:hx-post="@{/modals/actividad/eliminar(id=${actividad.id}, titulo=${actividad.titulo})}"
+                        <div th:hx-post="@{/modals/voluntario/in_habilitar(id=${voluntario.id},
+                        nombre=${voluntario.nombre} + ' ' + ${voluntario.apellidos}, accion=${voluntario.habilitado ? 'inhabilitar' : 'habilitar'})}"
                              hx-trigger="load" hx-target="this" hx-swap="outerHTML"></div>
-                    </td>
-                    <td class="text-end">
-                        <a class="nav-link me-3" data-bs-toggle="modal" data-bs-target="#modalNuevaActividad">
-                            <i class="fas fa-thumbs-up me-1"></i>
-                        </a>
-                    </td>
-                    <td class="text-end">
-                        <a class="nav-link me-3"
-                           th:href="@{/pdfs/generar/Actividad/{id}(id=${actividad.id})}"
-                           target="_blank">
-                            <i class="fas fa-print me-1"></i>
-                        </a>
                     </td>
                 </tr>
                 </tbody>
                 <tfoot>
                 <tr>
-                    <th scope="col">Nº Actividad</th>
-                    <th scope="col">Nombre</th>
-                    <th scope="col">Fecha realización</th>
-                    <th scope="col">Encargados</th>
+                    <th scope="col">Id Voluntario</th>
+                    <th scope="col">Nombre y apellidos</th>
+                    <th scope="col">Roles</th>
+                    <th scope="col">Habilitado</th>
                     <th><em>Editar</em></th>
-                    <th><em>Eliminar</em></th>
-                    <th><em>Evaluar</em></th>
-                    <th><em>Imprimir</em></th>
+                    <th><em>(In)Hab.</em></th>
                 </tr>
                 </tfoot>
             </table>
         </div>
     </div>
 </div>
-
-

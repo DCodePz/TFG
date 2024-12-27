@@ -40,9 +40,9 @@ public class ActividadController {
     }
 
     // POST
-    @PostMapping(path = "crear")
-    public void crearActividad(@RequestBody ActividadFormacion actividad) {
-        actividadService.crearActividad(actividad);
+    @PostMapping(path = "crear/{periodoId}")
+    public void crearActividad(@PathVariable Long periodoId, @RequestBody ActividadFormacion actividad) {
+        actividadService.crearActividad(actividad, periodoId);
     }
 
     // PUT
@@ -58,4 +58,6 @@ public class ActividadController {
     }
 
     // TODO: Evaluar actividad
+    // (path = "evaluar/{actividadId}")
+
 }
