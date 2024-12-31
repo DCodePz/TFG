@@ -36,6 +36,12 @@ public class Periodo {
         this.habilitado = habilitado;
     }
 
+    public Periodo(String nombre, LocalDate inicio, LocalDate fin) {
+        this.nombre = nombre;
+        this.inicio = inicio;
+        this.fin = fin;
+    }
+
     //    -- Getters y Setters --
 
     public Long getId() {

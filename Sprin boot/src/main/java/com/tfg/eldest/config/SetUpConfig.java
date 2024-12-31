@@ -182,11 +182,11 @@ public class SetUpConfig {
             rolRepository.saveAll(List.of(rol1, rol2, rol3));
 
             // Crear usuarios
-            Usuario usr1 = new Usuario(1L, "Nombre 1", "Apellido 1", "Email 1", "Password 1", false, "Voluntario");
-            Usuario usr2 = new Usuario(2L, "Nombre 2", "Apellido 2", "Email 2", "Password 2", true, "Voluntario");
-            Usuario usr3 = new Usuario(3L, "Nombre 3", "Apellido 3", "Email 3", "Password 3", true, "Voluntario");
-            Usuario usr4 = new Usuario(4L, "Nombre 4", "Apellido 4", "Email 4", "Password 4", true, "Socio");
-            Usuario usr5 = new Usuario(5L, "Nombre 5", "Apellido 5", "Email 5", "Password 5", true, "Socio");
+            Usuario usr1 = new Usuario(1L, "Nombre 1", "Apellido 1", "email1@example.com", "Password 1", false, "Voluntario");
+            Usuario usr2 = new Usuario(2L, "Nombre 2", "Apellido 2", "email2@example.com", "Password 2", true, "Voluntario");
+            Usuario usr3 = new Usuario(3L, "Nombre 3", "Apellido 3", "email3@example.com", "Password 3", true, "Voluntario");
+            Usuario usr4 = new Usuario(4L, "Nombre 4", "Apellido 4", "email4@example.com", "Password 4", true, "Socio");
+            Usuario usr5 = new Usuario(5L, "Nombre 5", "Apellido 5", "email5@example.com", "Password 5", true, "Socio");
 
             usr1.setRoles(List.of(rol1));
             usr2.setRoles(List.of(rol2));

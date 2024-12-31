@@ -1,5 +1,6 @@
 package com.tfg.eldest.periodo;
 
+import com.tfg.eldest.usuario.Usuario;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,6 @@ public class PeriodoService {
             throw new RuntimeException("Periodo nombre no puede estar vacio");
         }
 
-        periodo.setId(periodoRepository.count() + 1);
         periodo.setHabilitado(Boolean.TRUE);
         periodoRepository.save(periodo);
     }
@@ -59,7 +59,9 @@ public class PeriodoService {
                 && !Objects.equals(periodo.getFin(), periodoModificado.getFin())) {
             periodo.setFin(periodoModificado.getFin());
         }
+    }
 
-        periodo.setHabilitado(periodoModificado.getHabilitado());
+    public List<Periodo> getPeriodosBusqueda(String infoBuscar) {
+        return periodoRepository.getPeriodosBusqueda(infoBuscar);
     }
 }

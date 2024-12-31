@@ -1,6 +1,7 @@
 package com.tfg.eldest.controllers;
 
 import com.tfg.eldest.actividadformacion.ActividadFormacion;
+import com.tfg.eldest.periodo.Periodo;
 import com.tfg.eldest.rol.Rol;
 import com.tfg.eldest.usuario.Usuario;
 import jakarta.servlet.http.HttpSession;
@@ -16,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -95,14 +95,6 @@ public class CuerpoController {
                                  Model model) {
 
         return "fragments/cuerpo/coordinacion/Coordinacion :: content";
-    }
-
-    @PostMapping(path = "coordinacion/personalizacion")
-    public String Personalizacion(HttpSession session,
-                               @RequestParam Map<String, Object> params,
-                               Model model) {
-
-        return "fragments/cuerpo/coordinacion/personalizacion/Personalizacion :: content";
     }
 
     @PostMapping(path = "coordinacion/voluntarios")
@@ -236,6 +228,106 @@ public class CuerpoController {
         }
 
         return Voluntarios(session, params, model);
+    }
+
+    @PostMapping(path = "coordinacion/periodos")
+    public String Periodos(HttpSession session,
+                              @RequestParam Map<String, Object> params,
+                              Model model) {
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/periodos";
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<List<Periodo>> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Periodo>>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        List<Periodo> periodos = response.getBody();
+
+        model.addAttribute("periodos", periodos);
+        return "fragments/cuerpo/coordinacion/periodos/Periodos :: content";
+    }
+
+    @PostMapping(path = "coordinacion/periodos/nuevo")
+    public String NuevoPeriodo(HttpSession session,
+                                  @RequestParam Map<String, Object> params,
+                                  Model model) {
+        return "fragments/cuerpo/coordinacion/periodos/NuevoPeriodo :: content";
+    }
+
+    @PostMapping(path = "coordinacion/periodos/editar")
+    public String EditarPeriodo(HttpSession session,
+                                   @RequestParam Map<String, Object> params,
+                                   Model model) {
+        String periodoID = (String) params.getOrDefault("id", null);
+
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/periodos/" + periodoID;
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<Periodo> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Periodo>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        Periodo periodo = response.getBody();
+
+        model.addAttribute("periodo", periodo);
+
+        return "fragments/cuerpo/coordinacion/periodos/InfoPeriodo :: content";
+    }
+
+    @PostMapping(path = "coordinacion/periodos/in_habilitar")
+    public String in_habilitarPeriodo(HttpSession session,
+                                         @RequestParam Map<String, Object> params,
+                                         Model model) {
+        String periodoID = (String) params.getOrDefault("id", null);
+
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/periodos/invertirHabilitado/" + periodoID;
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<Void> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.PUT,
+                null,
+                Void.class
+        );
+
+        // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("Periodo modificado exitosamente");
+        } else {
+            System.out.println("Error al modificar el periodo: " + response.getStatusCode());
+        }
+
+        return Periodos(session, params, model);
+    }
+
+    @PostMapping(path = "coordinacion/personalizacion")
+    public String Personalizacion(HttpSession session,
+                                  @RequestParam Map<String, Object> params,
+                                  Model model) {
+
+        return "fragments/cuerpo/coordinacion/personalizacion/Personalizacion :: content";
     }
 
     //    ACTIVIDADES

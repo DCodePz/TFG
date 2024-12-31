@@ -50,6 +50,19 @@ public class ModalsController {
         return "fragments/modals/ModalesPeriodo :: modalCambiarPeriodo";
     }
 
+    @PostMapping(path = "periodo/in_habilitar")
+    public String in_hablitarPeriodo(HttpSession session,
+                                        @RequestParam Map<String, Object> params,
+                                        Model model) {
+        String id = (String) params.getOrDefault("id", "");
+        String nombre = (String) params.getOrDefault("nombre", "");
+        String accion = (String) params.getOrDefault("accion", "");
+        model.addAttribute("idPeriodo", id);
+        model.addAttribute("nombre", nombre);
+        model.addAttribute("accion", accion);
+        return "fragments/modals/ModalesPeriodo :: modalIn_HabilitarPeriodo";
+    }
+
     @PostMapping(path = "actividad/eliminar")
     public String eliminarActividad(HttpSession session,
                                     @RequestParam Map<String, Object> params,

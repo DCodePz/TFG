@@ -49,13 +49,35 @@ public class UsuarioService {
     public void guardarUsuario(Long usuarioId, Usuario usuarioModificado) {
         Usuario usuario = getUsuario(usuarioId);
 
+        if (usuarioModificado.getId() != null
+                && !usuarioModificado.getId().equals(usuario.getId())) {
+            usuario.setId(usuarioModificado.getId());
+        }
+
+        if (usuarioModificado.getNombre() != null && !usuarioModificado.getNombre().isEmpty()
+                && !usuarioModificado.getNombre().equals(usuario.getNombre())) {
+            usuario.setNombre(usuarioModificado.getNombre());
+        }
+
+        if (usuarioModificado.getApellidos() != null && !usuarioModificado.getApellidos().isEmpty()
+                && !usuarioModificado.getApellidos().equals(usuario.getApellidos())) {
+            usuario.setApellidos(usuarioModificado.getApellidos());
+        }
+
+        if (usuarioModificado.getEmail() != null && !usuarioModificado.getEmail().isEmpty()
+                && !usuarioModificado.getEmail().equals(usuario.getEmail())) {
+            usuario.setEmail(usuarioModificado.getEmail());
+        }
 
         if (usuarioModificado.getPassword() != null && !usuarioModificado.getPassword().isEmpty()
-                && !Objects.equals(usuario.getPassword(), usuarioModificado.getPassword())) {
+                && !usuarioModificado.getPassword().equals(usuario.getPassword())) {
             usuario.setPassword(usuarioModificado.getPassword());
         }
 
-        usuario.setHabilitado(usuarioModificado.getHabilitado());
+        if (usuarioModificado.getRoles() != null && !usuarioModificado.getRoles().isEmpty()
+                && !usuarioModificado.getRoles().equals(usuario.getRoles())) {
+            usuario.setRoles(usuarioModificado.getRoles());
+        }
     }
 
     public List<Usuario> getVoluntariosBusqueda(String infoBuscar) {

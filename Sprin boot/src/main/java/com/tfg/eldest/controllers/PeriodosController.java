@@ -1,8 +1,7 @@
 package com.tfg.eldest.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.tfg.eldest.actividadformacion.ActividadFormacion;
-import com.tfg.eldest.rol.Rol;
+import com.tfg.eldest.periodo.Periodo;
 import com.tfg.eldest.usuario.Usuario;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,13 +18,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 @Controller
-@RequestMapping("/coordinacion/voluntarios")
-public class VoluntariosController {
+@RequestMapping("/coordinacion/periodos")
+public class PeriodosController {
     @Value("${api.url}")  // Cargar la URL desde application.properties
     private String apiUrl;
 
@@ -34,35 +32,6 @@ public class VoluntariosController {
 
     @Autowired
     private CuerpoController cuerpoController;
-
-    private List<Rol> obtenerRoles(@RequestParam Map<String, Object> params) {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
-
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/roles";
-
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<List<Rol>> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Rol>>() {
-                }
-        );
-
-        // Obtener la lista de actividades de la respuesta
-        List<Rol> roles = response.getBody();
-
-        List<Rol> seleccionados = new ArrayList<>();
-        for (Rol rol : roles) {
-            String id = (String) params.get("rol " + rol.getId());
-            if (id != null && !id.isEmpty()) {
-                seleccionados.add(rol);
-            }
-        }
-        return seleccionados;
-    }
 
     @PostMapping(path = "crear")
     public String Crear(HttpSession session,
@@ -73,21 +42,17 @@ public class VoluntariosController {
         RestTemplate restTemplate = new RestTemplate();
 
         // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/usuarios/crear";
+        String apiUrl = this.apiUrl + "/periodos/crear";
 
         // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
-        Usuario nuevoVoluntario = new Usuario(
-                Long.parseLong((String) params.get("id")),
+        Periodo nuevoPeriodo = new Periodo(
                 (String) params.get("nombre"),
-                (String) params.get("apellidos"),
-                (String) params.get("email"),
-                (String) params.get("password"),
-                "Voluntario",
-                obtenerRoles(params)
+                LocalDate.parse((String) params.get("fechaInicio")),
+                LocalDate.parse((String) params.get("fechaFin"))
         );
 
         // Crear la entidad Http que contiene el cuerpo de la solicitud
-        HttpEntity<Usuario> requestEntity = new HttpEntity<>(nuevoVoluntario);
+        HttpEntity<Periodo> requestEntity = new HttpEntity<>(nuevoPeriodo);
 
         // Realizar la solicitud POST a la API de actividades
         ResponseEntity<Void> response = restTemplate.exchange(
@@ -99,9 +64,9 @@ public class VoluntariosController {
 
         // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
         if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Voluntario creado exitosamente");
+            System.out.println("Periodo creado exitosamente");
         } else {
-            System.out.println("Error al crear el voluntario: " + response.getStatusCode());
+            System.out.println("Error al crear el periodo: " + response.getStatusCode());
         }
 
         String url = (String) params.getOrDefault("url", "paneldecontrol");
@@ -121,21 +86,17 @@ public class VoluntariosController {
         RestTemplate restTemplate = new RestTemplate();
 
         // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/usuarios/guardar/" + params.get("id");
+        String apiUrl = this.apiUrl + "/periodos/guardar/" + params.get("id");
 
         // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
-        Usuario nuevaVoluntario = new Usuario(
-                Long.parseLong((String) params.get("id")),
+        Periodo nuevaVoluntario = new Periodo(
                 (String) params.get("nombre"),
-                (String) params.get("apellidos"),
-                (String) params.get("email"),
-                (String) params.get("password"),
-                "Voluntario",
-                obtenerRoles(params)
+                LocalDate.parse((String) params.get("fechaInicio")),
+                LocalDate.parse((String) params.get("fechaFin"))
         );
 
         // Crear la entidad Http que contiene el cuerpo de la solicitud
-        HttpEntity<Usuario> requestEntity = new HttpEntity<>(nuevaVoluntario);
+        HttpEntity<Periodo> requestEntity = new HttpEntity<>(nuevaVoluntario);
 
         // Realizar la solicitud GET a la API de actividades
         ResponseEntity<Void> response = restTemplate.exchange(
@@ -147,9 +108,9 @@ public class VoluntariosController {
 
         // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
         if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Voluntario editado exitosamente");
+            System.out.println("Periodo editado exitosamente");
         } else {
-            System.out.println("Error al editar el voluntarioi: " + response.getStatusCode());
+            System.out.println("Error al editar el periodo: " + response.getStatusCode());
         }
 
         String url = (String) params.getOrDefault("url", "paneldecontrol");
@@ -162,36 +123,36 @@ public class VoluntariosController {
     }
 
     @PostMapping(path = "buscar")
-    public String buscarVoluntarios(HttpSession session,
+    public String buscarPeriodos(HttpSession session,
                                     @RequestParam Map<String, Object> params,
                                     Model model) {
         String query = (String) params.getOrDefault("query", "");
 
         String fragment = "";
         if (query.isEmpty()) {
-            fragment = cuerpoController.Voluntarios(session, params, model);
+            fragment = cuerpoController.Periodos(session, params, model);
         } else {
             // Crear un objeto RestTemplate para hacer la llamada a la API
             RestTemplate restTemplate = new RestTemplate();
 
             // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/usuarios/voluntarios/buscar/" + query;
+            String apiUrl = this.apiUrl + "/periodos/buscar/" + query;
 
             // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<List<Usuario>> response = restTemplate.exchange(
+            ResponseEntity<List<Periodo>> response = restTemplate.exchange(
                     apiUrl,
                     HttpMethod.GET,
                     null,
-                    new ParameterizedTypeReference<List<Usuario>>() {
+                    new ParameterizedTypeReference<List<Periodo>>() {
                     }
             );
 
             // Obtener la lista de actividades de la respuesta
-            List<Usuario> voluntarios = response.getBody();
+            List<Periodo> periodos = response.getBody();
 
-            model.addAttribute("voluntarios", voluntarios);
+            model.addAttribute("periodos", periodos);
 
-            fragment = "fragments/cuerpo/coordinacion/voluntarios/Voluntarios :: content";
+            fragment = "fragments/cuerpo/coordinacion/periodos/Periodos :: content";
         }
 
         return fragment;

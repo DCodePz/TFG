@@ -1,6 +1,7 @@
 package com.tfg.eldest.periodo;
 
 import com.tfg.eldest.actividadformacion.ActividadFormacion;
+import com.tfg.eldest.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -27,6 +28,11 @@ public class PeriodoController {
     @GetMapping(path = "{periodoId}")
     public Periodo getPeriodo(@PathVariable Long periodoId) {
         return periodoService.getPeriodo(periodoId);
+    }
+
+    @GetMapping(path = "buscar/{infoBuscar}")
+    public List<Periodo> getPeriodosBusqueda(@PathVariable String infoBuscar) {
+        return periodoService.getPeriodosBusqueda(infoBuscar);
     }
 
     // POST

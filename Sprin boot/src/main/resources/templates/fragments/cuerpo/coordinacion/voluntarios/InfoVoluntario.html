@@ -3,13 +3,13 @@
         <div class="card-body">
             <!-- Contenido -->
             <form id="formulario"
-                  th:hx-post="@{/coordinacion/voluntarios/crear(url='coordinacion/voluntarios', tit='Voluntarios')}"
+                  th:hx-post="@{/coordinacion/voluntarios/guardar(url='coordinacion/voluntarios', tit='Voluntarios')}"
                   hx-trigger="submit" hx-target="#Main" hx-swap="innerHTML">
                 <!-- Fila 1 -->
                 <div class="row mb-3">
                     <div class="col-md-6">
                         <label for="id" class="form-label fw-bold">ID</label>
-                        <input type="number" class="form-control" id="id" name="id" required
+                        <input type="number" class="form-control" id="id" name="id" required disabled
                                th:value="${voluntario.id}">
                     </div>
                     <div class="col-md-6">
