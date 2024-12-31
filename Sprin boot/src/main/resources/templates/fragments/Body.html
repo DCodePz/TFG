@@ -56,18 +56,17 @@
                 <a class="nav-link" th:text="${periodo}" data-bs-toggle="modal" data-bs-target="#modalCambiarPeriodo">Indefinido</a>
             </li>
             <li class="nav-item dropdown">
-                <a
-                        class="nav-link dropdown-toggle"
-                        id="navbarDropdown"
-                        role="button"
-                        data-bs-toggle="dropdown"
-                        aria-expanded="false"
+                <a class="nav-link dropdown-toggle"
+                   id="navbarDropdown"
+                   role="button"
+                   data-bs-toggle="dropdown"
+                   aria-expanded="false"
                 ><i class="fas fa-user fa-fw"></i
                 ></a>
-                <ul
-                        class="dropdown-menu dropdown-menu-end"
-                        aria-labelledby="navbarDropdown">
-                    <li><a th:text="${usuario}" class="dropdown-item disabled text-black text-center">Invitado</a>
+                <ul class="dropdown-menu dropdown-menu-end"
+                    aria-labelledby="navbarDropdown">
+                    <li>
+                        <a th:text="${usuario}" class="dropdown-item disabled text-black text-center">Invitado</a>
                     </li>
                     <li>
                         <a class="dropdown-item">Cambiar contraseña</a>
@@ -75,7 +74,12 @@
                     <li>
                         <hr class="dropdown-divider"/>
                     </li>
-                    <li><a class="dropdown-item">Salir</a></li>
+                    <li>
+                        <a class="dropdown-item" href="/"
+                           th:href="@{/salir}">
+                            Salir
+                        </a>
+                    </li>
                 </ul>
             </li>
         </ul>
@@ -211,6 +215,5 @@
                 });
             }
         });
-
     </script>
 </div>

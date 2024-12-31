@@ -36,6 +36,6 @@ public class PersonalizacionController {
 
         sessionService.setPersonalizacion(session, org, primario, secundario, logo);
 
-        return "Base.html";
+        return "pantallas/App";
     }
 }

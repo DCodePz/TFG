@@ -2,6 +2,8 @@ package com.tfg.eldest.controllers;
 
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,9 +20,16 @@ public class HomeController {
     private SessionService sessionService;
 
     @GetMapping
-    public String index(HttpSession session, Model model) {
+    public String home(HttpSession session,
+                       @RequestParam Map<String, Object> params,
+                       Model model) {
+        return "pantallas/Web";
+    }
+
+    @GetMapping(path = "control")
+    public  String index(HttpSession session, Model model) {
         sessionService.setSession(session, "1", "1","true");
-        return "Base";
+        return "pantallas/App";
     }
 
     @GetMapping(path = "inicio")
@@ -84,5 +93,13 @@ public class HomeController {
         model.addAttribute("org", sessionService.getOrg(session));
         model.addAttribute("id", id);
         return "fragments/Cabecera :: content";
+    }
+
+    @GetMapping(path = "salir")
+    public String Salir(HttpSession session,
+                                      @RequestParam Map<String, Object> params,
+                                      Model model) {
+        sessionService.removeUserSession(session);
+        return home(session,params,model);
     }
 }
