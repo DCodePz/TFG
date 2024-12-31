@@ -22,7 +22,7 @@ public class RolService {
 
     public Rol getRol(Long rolId) {
         return rolRepository.findById(rolId)
-                .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
+                .orElseThrow(() -> new RuntimeException("Rol no encontrado"));
     }
 
     public void crearRol(Rol rol) {
