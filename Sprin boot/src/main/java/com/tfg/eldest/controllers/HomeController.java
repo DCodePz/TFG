@@ -141,7 +141,7 @@ public class HomeController {
     public String inicioGet(HttpSession session,
                             @RequestParam Map<String, Object> params,
                             Model model) {
-        String nombreUsuario = sessionService.getUsuarioID(session);
+        String nombreUsuario = sessionService.getNombreUsuarioID(session);
         Boolean coordinacion = Boolean.parseBoolean(sessionService.getCoordinacion(session));
         String nombrePeriodo = sessionService.getNombrePeriodo(session);
         String primario = sessionService.getPrimario(session);
@@ -162,7 +162,7 @@ public class HomeController {
     public String inicioPost(HttpSession session,
                              @RequestParam Map<String, Object> params,
                              Model model) {
-        String nombreUsuario = sessionService.getUsuarioID(session);
+        String nombreUsuario = sessionService.getNombreUsuarioID(session);
         Boolean coordinacion = Boolean.parseBoolean(sessionService.getCoordinacion(session));
         String periodoID = (String) params.getOrDefault("periodo", "Indefinido");
         String primario = sessionService.getPrimario(session);

@@ -1,6 +1,7 @@
 package com.tfg.eldest.controllers;
 
 import com.tfg.eldest.periodo.Periodo;
+import com.tfg.eldest.usuario.Usuario;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
@@ -19,6 +20,29 @@ public class SessionService {
         session.setAttribute("usuarioID", usuarioID);
         session.setAttribute("periodoID", periodoID);
         session.setAttribute("coordinacion", coordinacion);
+    }
+
+    // Método para obtener el id y nombre del usuario de la sesión
+    public String getNombreUsuarioID(HttpSession session) {
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/usuarios/" + session.getAttribute("usuarioID");
+
+        // Realizar la solicitud GET a la API
+        ResponseEntity<Usuario> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Usuario>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        Usuario usuario = response.getBody();
+
+        return (usuario.getId() + " - " + usuario.getNombre());
     }
 
     // Método para obtener el usuario de la sesión
