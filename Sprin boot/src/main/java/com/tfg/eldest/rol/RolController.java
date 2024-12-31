@@ -2,9 +2,7 @@ package com.tfg.eldest.rol;
 
 import com.tfg.eldest.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -22,5 +20,23 @@ public class RolController {
     @GetMapping
     public List<Rol> getRoles() {
         return rolService.getRoles();
+    }
+
+    @GetMapping(path = "{rolId}")
+    public Rol getRol(@PathVariable Long rolId) {
+        return rolService.getRol(rolId);
+    }
+
+    // POST
+    @PostMapping(path = "crear")
+    public void crearRol(@RequestBody Rol rol) {
+        rolService.crearRol(rol);
+    }
+
+    // PUT
+    @PutMapping(path = "guardar/{rolId}")
+    public void guardarRol(@PathVariable Long rolId,
+                               @RequestBody(required = false) Rol rolModificado) {
+        rolService.guardarRol(rolId, rolModificado);
     }
 }

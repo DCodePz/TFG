@@ -17,7 +17,7 @@
                    hx-target="#Main" hx-swap="innerHTML"><i class="fas fa-home"></i></a>
             </li>
             <li th:if="${coordinacion}" class="nav-item">
-                <a class="nav-link"
+                <a class="nav-link" th:if="${coordinacion}"
                    th:hx-post="@{/cabecera(url='coordinacion', titulo='Panel de coordinación')}"
                    hx-target="#Main" hx-swap="innerHTML">Panel de coordinación</a>
             </li>
@@ -76,7 +76,7 @@
                     </li>
                     <li>
                         <a class="dropdown-item" href="/"
-                           th:href="@{/salir}">
+                           th:href="@{/}">
                             Salir
                         </a>
                     </li>
@@ -110,7 +110,8 @@
                            data-bs-toggle="collapse"
                            data-bs-target="#collapseLayouts"
                            aria-expanded="false"
-                           aria-controls="collapseLayouts">
+                           aria-controls="collapseLayouts"
+                           th:if="${coordinacion}">
                             <div class="sb-nav-link-icon">
                                 <i class="fas fa-lock"></i>
                             </div>

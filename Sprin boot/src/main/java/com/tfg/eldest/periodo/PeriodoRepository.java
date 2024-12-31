@@ -10,6 +10,11 @@ import java.util.List;
 public interface PeriodoRepository extends JpaRepository<Periodo, Long> {
     @Query("SELECT p " +
             "FROM Periodo p " +
+            "WHERE p.habilitado=true")
+    List<Periodo> getPeriodosHabilitados();
+
+    @Query("SELECT p " +
+            "FROM Periodo p " +
             "WHERE p.nombre ILIKE CONCAT('%', ?1, '%')")
     List<Periodo> getPeriodosBusqueda(String infoBuscar);
 }

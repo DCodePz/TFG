@@ -1,0 +1,31 @@
+<div th:fragment="content" class="container mt-5">
+    <!-- Fila de encabezado con el botón para agregar cards -->
+    <div class="row mb-3">
+        <div class="col-12 text-right">
+            <a class="nav-link me-3"
+               th:hx-post="@{/cabecera(url='coordinacion/roles/nuevo', titulo='Nuevo Rol')}"
+               hx-target="#Main" hx-swap="innerHTML">
+                <i class="fas fa-add me-1"></i>
+                Nuevo rol
+            </a>
+        </div>
+    </div>
+
+    <!-- Fila de Cards -->
+    <div class="row">
+        <!-- Cards dinámicas se agregarán aquí -->
+        <div class="col-xl-3 col-md-6 mb-4" th:each="rol : ${roles}">
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${rol.nombre}"></h5>
+                    <a class="nav-link me-3"
+                       th:hx-post="@{/cabecera(id=${rol.id}, url='coordinacion/roles/editar', titulo='Editar Rol')}"
+                       hx-target="#Main" hx-swap="innerHTML">
+                        <i class="fas fa-pencil me-1"></i>
+                        Editar
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

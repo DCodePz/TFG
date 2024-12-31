@@ -230,6 +230,68 @@ public class CuerpoController {
         return Voluntarios(session, params, model);
     }
 
+    @PostMapping(path = "coordinacion/roles")
+    public String Roles(HttpSession session,
+                              @RequestParam Map<String, Object> params,
+                              Model model) {
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/roles";
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<List<Rol>> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Rol>>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        List<Rol> roles = response.getBody();
+
+        model.addAttribute("roles", roles);
+        return "fragments/cuerpo/coordinacion/roles/Roles :: content";
+    }
+
+    @PostMapping(path = "coordinacion/roles/nuevo")
+    public String NuevoRol(HttpSession session,
+                                  @RequestParam Map<String, Object> params,
+                                  Model model) {
+        return "fragments/cuerpo/coordinacion/roles/NuevoRol :: content";
+    }
+
+    @PostMapping(path = "coordinacion/roles/editar")
+    public String EditarRol(HttpSession session,
+                                   @RequestParam Map<String, Object> params,
+                                   Model model) {
+        String rolID = (String) params.getOrDefault("id", null);
+
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/roles/" + rolID;
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<Rol> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<Rol>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        Rol rol = response.getBody();
+
+        model.addAttribute("rol", rol);
+
+        return "fragments/cuerpo/coordinacion/roles/InfoRol :: content";
+    }
+
     @PostMapping(path = "coordinacion/periodos")
     public String Periodos(HttpSession session,
                               @RequestParam Map<String, Object> params,

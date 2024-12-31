@@ -109,7 +109,7 @@ public class VoluntariosController {
 
         model.addAttribute("url", url);
         model.addAttribute("titulo", titulo);
-        model.addAttribute("org", "Asociación Juvenil Aguazella");
+        model.addAttribute("org", sessionService.getOrg(session));
         return "fragments/Cabecera :: content";
     }
 
@@ -157,7 +157,7 @@ public class VoluntariosController {
 
         model.addAttribute("url", url);
         model.addAttribute("titulo", titulo);
-        model.addAttribute("org", "Asociación Juvenil Aguazella");
+        model.addAttribute("org", sessionService.getOrg(session));
         return "fragments/Cabecera :: content";
     }
 

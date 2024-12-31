@@ -32,7 +32,7 @@ public class ModalsController {
         RestTemplate restTemplate = new RestTemplate();
 
         // URL de la API que devuelve los periodos
-        String apiUrl = this.apiUrl + "/periodos";
+        String apiUrl = this.apiUrl + "/periodos/habilitados";
 
         // Realizar la solicitud GET a la API de periodos
         ResponseEntity<List<Periodo>> response = restTemplate.exchange(

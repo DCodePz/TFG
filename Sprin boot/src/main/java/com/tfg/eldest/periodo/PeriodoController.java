@@ -25,6 +25,11 @@ public class PeriodoController {
         return periodoService.getPeriodos();
     }
 
+    @GetMapping(path = "habilitados")
+    public List<Periodo> getPeriodosHabilitados() {
+        return periodoService.getPeriodosHabilitados();
+    }
+
     @GetMapping(path = "{periodoId}")
     public Periodo getPeriodo(@PathVariable Long periodoId) {
         return periodoService.getPeriodo(periodoId);

@@ -8,6 +8,15 @@
     </div>
 
     <div class="col-xl-4 col-md-4 mb-4">
+        <div th:hx-post="@{/cabecera(url='coordinacion/roles', titulo='Roles')}"
+             hx-target="#Main" hx-swap="innerHTML" class="btn btn-lg btn-outline-info w-100 text-left d-flex align-items-center">
+            <i class="fas fa-users-cog fa-2x me-3"></i>
+            <span class="h5 mb-0">Roles</span>
+        </div>
+    </div>
+
+
+    <div class="col-xl-4 col-md-4 mb-4">
         <div th:hx-post="@{/cabecera(url='coordinacion/periodos', titulo='Periodos')}"
              hx-target="#Main" hx-swap="innerHTML" class="btn btn-lg btn-outline-danger w-100 text-left d-flex align-items-center">
             <i class="fas fa-calendar-alt fa-2x me-3"></i>

@@ -21,6 +21,11 @@ public class PeriodoService {
         return periodoRepository.findAll();
     }
 
+
+    public List<Periodo> getPeriodosHabilitados() {
+        return periodoRepository.getPeriodosHabilitados();
+    }
+
     public Periodo getPeriodo(Long periodoId) {
         return periodoRepository.findById(periodoId)
                 .orElseThrow(() -> new RuntimeException("Periodo no encontrado"));

@@ -16,9 +16,6 @@ public class PersonalizacionController {
     @Autowired
     private SessionService sessionService;
 
-    @Autowired
-    private HomeController homeController;
-
     @PostMapping(path = "cambiar")
     public String CambiarDatos(HttpSession session,
                               @RequestParam Map<String, Object> params,

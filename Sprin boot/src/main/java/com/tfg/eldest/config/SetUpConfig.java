@@ -176,9 +176,9 @@ public class SetUpConfig {
             periodoRepository.saveAll(periodos);
 
             // Crear roles
-            Rol rol1 = new Rol("ROL_ADMIN");
-            Rol rol2 = new Rol("ROL_USR");
-            Rol rol3 = new Rol("ROL_TEST");
+            Rol rol1 = new Rol("Coordinador");
+            Rol rol2 = new Rol("Monitor");
+            Rol rol3 = new Rol("Normal");
             rolRepository.saveAll(List.of(rol1, rol2, rol3));
 
             // Crear usuarios

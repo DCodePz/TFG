@@ -1,0 +1,30 @@
+<div th:fragment="content" class="container-fluid px-4">
+    <div class="card mb-4">
+        <div class="card-body">
+            <!-- Contenido -->
+            <form id="formulario"
+                  th:hx-post="@{/coordinacion/roles/crear(url='coordinacion/roles', tit='Roles')}"
+                  hx-trigger="submit" hx-target="#Main" hx-swap="innerHTML">
+                <input type="hidden" id="id" name="id">
+
+                <!-- Fila 1 -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label for="nombre" class="form-label fw-bold">Nombre</label>
+                        <input type="text" class="form-control" id="nombre" name="nombre" required>
+                    </div>
+                </div>
+
+                <!-- Botones -->
+                <div class="d-flex justify-content-start gap-2">
+                    <button id="cancelar" type="button" class="btn btn-danger"
+                            th:hx-post="@{/cabecera(url='coordinacion/roles', titulo='Roles')}"
+                            hx-target="#Main" hx-swap="innerHTML">
+                        Cancelar
+                    </button>
+                    <button id="guardar" type="submit" class="btn btn-primary">Guardar</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
