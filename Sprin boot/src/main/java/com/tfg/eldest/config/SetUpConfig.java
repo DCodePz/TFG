@@ -5,6 +5,8 @@ import com.tfg.eldest.actividadformacion.actividad.ActividadRepository;
 import com.tfg.eldest.actividadformacion.formacion.FormacionRepository;
 import com.tfg.eldest.periodo.Periodo;
 import com.tfg.eldest.periodo.PeriodoRepository;
+import com.tfg.eldest.permiso.Permiso;
+import com.tfg.eldest.permiso.PermisoRepository;
 import com.tfg.eldest.rol.Rol;
 import com.tfg.eldest.rol.RolRepository;
 import com.tfg.eldest.usuario.Usuario;
@@ -169,17 +171,54 @@ public class SetUpConfig {
     }
 
     @Bean
-    CommandLineRunner commandLineRunnerSetUp() {
+    CommandLineRunner commandLineRunnerSetUp(PermisoRepository permisoRepository) {
         return args -> {
             // Periodos
             List<Periodo> periodos = obtenerPeriodos();
             periodoRepository.saveAll(periodos);
 
+            // Crear permisos
+            Permiso C_ACT = new Permiso("C_ACT", "El usuario puede crear actividades");
+            Permiso C_FOR = new Permiso("C_FOR", "El usuario puede crear formaciones");
+            Permiso V_ACT = new Permiso("V_ACT", "El usuario puede visualizar todas las actividades");
+            Permiso V_FOR = new Permiso("V_FOR", "El usuario puede visualizar todas las formaciones");
+            Permiso E_M_ACT = new Permiso("E_M_ACT", "El usuario puede editar las actividades en las que es colaborador que no han sido evaluadas");
+            Permiso E_M_FOR = new Permiso("E_M_FOR", "El usuario puede editar las formaciones en las que es colaborador");
+            Permiso E_ACT = new Permiso("E_ACT", "El usuario puede editar cualquier actividad");
+            Permiso E_FOR = new Permiso("E_FOR", "El usuario puede editar cualquier formación");
+            Permiso B_M_ACT = new Permiso("B_M_ACT", "El usuario puede borrar las actividades en las que es colaborador");
+            Permiso B_M_FOR = new Permiso("B_M_FOR", "El usuario puede borrar las formaciones en las que es colaborador");
+            Permiso B_ACT = new Permiso("B_ACT", "El usuario puede borrar cualquier actividad");
+            Permiso B_FOR = new Permiso("B_FOR", "El usuario puede borrar cualquier formación");
+            Permiso Ev_M_ACT = new Permiso("Ev_M_ACT", "El usuario puede evaluar las actividades en las que es colaborador");
+            Permiso Ev_ACT = new Permiso("Ev_ACT", "El usuario puede evaluar cualquier actividad");
+            Permiso I_M_ACT = new Permiso("I_M_ACT", "El usuario puede imprimir las actividades en las que es colaborador");
+            Permiso I_ACT = new Permiso("I_ACT", "El usuario puede imprimir cualquier actividad");
+
+            // Permisos relacionados con las coordinación
+            Permiso C_VOL = new Permiso("C_VOL", "El usuario puede crear voluntarios");
+            Permiso V_VOL = new Permiso("V_VOL", "El usuario puede visualizar todos los voluntarios");
+            Permiso E_VOL = new Permiso("E_VOL", "El usuario puede editar cualquier voluntario");
+            Permiso IH_VOL = new Permiso("IH_VOL", "El usuario puede (in)habilitar cualquier voluntario");
+            Permiso C_ROL = new Permiso("C_ROL", "El usuario puede crear roles");
+            Permiso V_ROL = new Permiso("V_ROL", "El usuario puede visualizar todos los roles");
+            Permiso E_ROL = new Permiso("E_ROL", "El usuario puede editar cualquier rol");
+            Permiso C_PER = new Permiso("C_PER", "El usuario puede crear periodos");
+            Permiso V_PER = new Permiso("V_PER", "El usuario puede visualizar todos los periodos");
+            Permiso E_PER = new Permiso("E_PER", "El usuario puede editar cualquier periodo");
+            Permiso IH_PER = new Permiso("IH_PER", "El usuario puede (in)habilitar cualquier periodo");
+            Permiso CUSTOM = new Permiso("CUSTOM", "El usuario puede customizar ciertos atributos de la aplicación");
+            permisoRepository.saveAll(List.of(
+                    C_ACT, C_FOR, V_ACT, V_FOR, E_M_ACT, E_M_FOR, E_ACT, E_FOR,
+                    B_M_ACT, B_M_FOR, B_ACT, B_FOR, Ev_M_ACT, Ev_ACT, I_M_ACT, I_ACT,
+                    C_VOL, V_VOL, E_VOL, IH_VOL, C_ROL, V_ROL, E_ROL, C_PER, V_PER, E_PER, IH_PER, CUSTOM
+            ));
+
+
             // Crear roles
-            Rol rol1 = new Rol("Coordinador");
-            Rol rol2 = new Rol("Monitor");
-            Rol rol3 = new Rol("Normal");
-            rolRepository.saveAll(List.of(rol1, rol2, rol3));
+            Rol rol1 = new Rol("Coordinador", List.of(C_ACT,C_FOR,V_ACT,V_FOR,E_ACT,E_FOR,B_ACT,B_FOR,Ev_ACT,I_ACT,C_VOL,V_VOL,E_VOL,IH_VOL,C_ROL,V_ROL,E_ROL,C_PER,V_PER,E_PER,IH_PER,CUSTOM));
+            Rol rol2 = new Rol("Monitor", List.of(C_ACT,C_FOR,V_ACT,V_FOR,E_M_ACT,E_M_FOR,B_M_ACT,B_M_FOR,Ev_M_ACT,I_M_ACT));
+            rolRepository.saveAll(List.of(rol1, rol2));
 
             // Crear usuarios
             Usuario usr1 = new Usuario(1L, "Nombre 1", "Apellido 1", "email1@example.com", "Password 1", false, "Voluntario");

@@ -2,6 +2,7 @@ package com.tfg.eldest.controllers;
 
 import com.tfg.eldest.actividadformacion.ActividadFormacion;
 import com.tfg.eldest.periodo.Periodo;
+import com.tfg.eldest.permiso.Permiso;
 import com.tfg.eldest.rol.Rol;
 import com.tfg.eldest.usuario.Usuario;
 import jakarta.servlet.http.HttpSession;
@@ -33,7 +34,7 @@ public class CuerpoController {
     @Autowired
     private SessionService sessionService;
 
-    private List<Usuario> obtenerUsuarios(){
+    private List<Usuario> obtenerUsuarios() {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
@@ -55,7 +56,7 @@ public class CuerpoController {
         return usuarios;
     }
 
-    private List<Rol> obtenerRoles(){
+    private List<Rol> obtenerRoles() {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
@@ -77,6 +78,28 @@ public class CuerpoController {
         return roles;
     }
 
+    private List<Permiso> obtenerPermisos() {
+        // Crear un objeto RestTemplate para hacer la llamada a la API
+        RestTemplate restTemplate = new RestTemplate();
+
+        // URL de la API que devuelve las actividades
+        String apiUrl = this.apiUrl + "/permisos";
+
+        // Realizar la solicitud GET a la API de actividades
+        ResponseEntity<List<Permiso>> response = restTemplate.exchange(
+                apiUrl,
+                HttpMethod.GET,
+                null,
+                new ParameterizedTypeReference<List<Permiso>>() {
+                }
+        );
+
+        // Obtener la lista de actividades de la respuesta
+        List<Permiso> permisos = response.getBody();
+
+        return permisos;
+    }
+
     //    PANEL DE CONTROL
     @PostMapping(path = "paneldecontrol")
     public String PanelDeControl(HttpSession session,
@@ -91,8 +114,8 @@ public class CuerpoController {
     //    COORDINACIÓN
     @PostMapping(path = "coordinacion")
     public String Coordinacion(HttpSession session,
-                                 @RequestParam Map<String, Object> params,
-                                 Model model) {
+                               @RequestParam Map<String, Object> params,
+                               Model model) {
 
         return "fragments/cuerpo/coordinacion/Coordinacion :: content";
     }
@@ -125,8 +148,8 @@ public class CuerpoController {
 
     @PostMapping(path = "coordinacion/voluntarios/nuevo")
     public String NuevoVoluntario(HttpSession session,
-                                 @RequestParam Map<String, Object> params,
-                                 Model model) {
+                                  @RequestParam Map<String, Object> params,
+                                  Model model) {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
@@ -151,8 +174,8 @@ public class CuerpoController {
 
     @PostMapping(path = "coordinacion/voluntarios/editar")
     public String EditarVoluntario(HttpSession session,
-                                  @RequestParam Map<String, Object> params,
-                                  Model model) {
+                                   @RequestParam Map<String, Object> params,
+                                   Model model) {
         String voluntarioID = (String) params.getOrDefault("id", null);
 
         // Crear un objeto RestTemplate para hacer la llamada a la API
@@ -188,7 +211,7 @@ public class CuerpoController {
                 }
             }
 
-            Map <String, String> tmp = new HashMap<>();
+            Map<String, String> tmp = new HashMap<>();
             tmp.put(rol.getId().toString(), rol.getNombre());
             roles.put(tmp, encontrado);
         }
@@ -232,8 +255,8 @@ public class CuerpoController {
 
     @PostMapping(path = "coordinacion/roles")
     public String Roles(HttpSession session,
-                              @RequestParam Map<String, Object> params,
-                              Model model) {
+                        @RequestParam Map<String, Object> params,
+                        Model model) {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
@@ -258,15 +281,15 @@ public class CuerpoController {
 
     @PostMapping(path = "coordinacion/roles/nuevo")
     public String NuevoRol(HttpSession session,
-                                  @RequestParam Map<String, Object> params,
-                                  Model model) {
+                           @RequestParam Map<String, Object> params,
+                           Model model) {
         return "fragments/cuerpo/coordinacion/roles/NuevoRol :: content";
     }
 
     @PostMapping(path = "coordinacion/roles/editar")
     public String EditarRol(HttpSession session,
-                                   @RequestParam Map<String, Object> params,
-                                   Model model) {
+                            @RequestParam Map<String, Object> params,
+                            Model model) {
         String rolID = (String) params.getOrDefault("id", null);
 
         // Crear un objeto RestTemplate para hacer la llamada a la API
@@ -289,13 +312,31 @@ public class CuerpoController {
 
         model.addAttribute("rol", rol);
 
+        // Procesamos los permisos
+        List<Permiso> todosPermisos = obtenerPermisos();
+        Map<Map<String, String>, Boolean> permisos = new HashMap<>();
+
+        for (Permiso permiso : todosPermisos) {
+            Boolean encontrado = FALSE;
+            for (Permiso buscar : rol.getPermisos()) {
+                if (permiso.getId().equals(buscar.getId())) {
+                    encontrado = TRUE;
+                    break;
+                }
+            }
+
+            Map<String, String> tmp = new HashMap<>();
+            tmp.put(permiso.getId().toString(), permiso.getNombre());
+            permisos.put(tmp, encontrado);
+        }
+
         return "fragments/cuerpo/coordinacion/roles/InfoRol :: content";
     }
 
     @PostMapping(path = "coordinacion/periodos")
     public String Periodos(HttpSession session,
-                              @RequestParam Map<String, Object> params,
-                              Model model) {
+                           @RequestParam Map<String, Object> params,
+                           Model model) {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
@@ -320,15 +361,15 @@ public class CuerpoController {
 
     @PostMapping(path = "coordinacion/periodos/nuevo")
     public String NuevoPeriodo(HttpSession session,
-                                  @RequestParam Map<String, Object> params,
-                                  Model model) {
+                               @RequestParam Map<String, Object> params,
+                               Model model) {
         return "fragments/cuerpo/coordinacion/periodos/NuevoPeriodo :: content";
     }
 
     @PostMapping(path = "coordinacion/periodos/editar")
     public String EditarPeriodo(HttpSession session,
-                                   @RequestParam Map<String, Object> params,
-                                   Model model) {
+                                @RequestParam Map<String, Object> params,
+                                Model model) {
         String periodoID = (String) params.getOrDefault("id", null);
 
         // Crear un objeto RestTemplate para hacer la llamada a la API
@@ -356,8 +397,8 @@ public class CuerpoController {
 
     @PostMapping(path = "coordinacion/periodos/in_habilitar")
     public String in_habilitarPeriodo(HttpSession session,
-                                         @RequestParam Map<String, Object> params,
-                                         Model model) {
+                                      @RequestParam Map<String, Object> params,
+                                      Model model) {
         String periodoID = (String) params.getOrDefault("id", null);
 
         // Crear un objeto RestTemplate para hacer la llamada a la API
@@ -451,8 +492,8 @@ public class CuerpoController {
 
     @PostMapping(path = "actividades/editar")
     public String EditarActividad(HttpSession session,
-                                 @RequestParam Map<String, Object> params,
-                                 Model model) {
+                                  @RequestParam Map<String, Object> params,
+                                  Model model) {
         String actividadID = (String) params.getOrDefault("id", null);
 
         // Crear un objeto RestTemplate para hacer la llamada a la API
@@ -478,7 +519,7 @@ public class CuerpoController {
 
         // Procesamos la edades
         String[] partes = actividad.getGrupo_edad().split(",");
-        Boolean ppChecked= FALSE, pgChecked=FALSE, mdChecked=FALSE, myChecked=FALSE;
+        Boolean ppChecked = FALSE, pgChecked = FALSE, mdChecked = FALSE, myChecked = FALSE;
         for (String parte : partes) {
             switch (parte) {
                 case "Pequeños Pequeños" -> ppChecked = TRUE;
@@ -516,8 +557,8 @@ public class CuerpoController {
 
     @PostMapping(path = "actividades/eliminar")
     public String EliminarActividad(HttpSession session,
-                                  @RequestParam Map<String, Object> params,
-                                  Model model) {
+                                    @RequestParam Map<String, Object> params,
+                                    Model model) {
         String actividadID = (String) params.getOrDefault("id", null);
 
         // Crear un objeto RestTemplate para hacer la llamada a la API
@@ -629,7 +670,7 @@ public class CuerpoController {
 
         // Procesamos la edades
         String[] partes = formacion.getGrupo_edad().split(",");
-        Boolean ppChecked= FALSE, pgChecked=FALSE, mdChecked=FALSE, myChecked=FALSE;
+        Boolean ppChecked = FALSE, pgChecked = FALSE, mdChecked = FALSE, myChecked = FALSE;
         for (String parte : partes) {
             switch (parte) {
                 case "Pequeños Pequeños" -> ppChecked = TRUE;

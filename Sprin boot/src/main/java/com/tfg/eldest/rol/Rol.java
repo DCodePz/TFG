@@ -1,6 +1,7 @@
 package com.tfg.eldest.rol;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.tfg.eldest.permiso.Permiso;
 import com.tfg.eldest.usuario.Usuario;
 import jakarta.persistence.*;
 
@@ -19,11 +20,30 @@ public class Rol {
     @JsonIgnore
     private Collection<Usuario> usuarios;
 
+    @ManyToMany
+    @JoinTable(
+            name = "rol_permiso",
+            joinColumns = @JoinColumn(
+                    name = "rol_id",
+                    referencedColumnName = "id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "permiso_id",
+                    referencedColumnName = "id"
+            )
+    )
+    private Collection<Permiso> permisos;
+
     public Rol() {
     }
 
     public Rol(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Rol(String nombre, Collection<Permiso> permisos) {
+        this.nombre = nombre;
+        this.permisos = permisos;
     }
 
     //    -- Getters y Setters --
@@ -52,6 +72,14 @@ public class Rol {
         this.usuarios = usuarios;
     }
 
+    public Collection<Permiso> getPermisos() {
+        return permisos;
+    }
+
+    public void setPermisos(Collection<Permiso> permisos) {
+        this.permisos = permisos;
+    }
+
     //    -----------------------
 
     @Override
@@ -73,8 +101,20 @@ public class Rol {
                 }
             }
         }
-        result.append("]}");
+        result.append("], permisos=[");
 
+        if (permisos != null) {
+            int i = 0;
+            for (Permiso permiso : permisos) {
+                result.append(permiso.getId()).append("-").append(permiso.getNombre());
+
+                // Si no es el último elemento, añadir la coma
+                if (++i < permisos.size()) {
+                    result.append(", ");
+                }
+            }
+        }
+        result.append("]}");
         return result.toString();
     }
 }

@@ -16,6 +16,25 @@
                     </div>
                 </div>
 
+                <!-- Fila 2: Permisos -->
+                <div class="row mb-3">
+                    <div class="col-md-12">
+                        <label class="form-label fw-bold">Permisos</label>
+                        <div class="form-check">
+                            <div th:each="permiso : ${permisos}">
+                                <input class="form-check-input" type="checkbox"
+                                       id="permiso-${permiso.codigo}"
+                                       name="permisos"
+                                       th:value="${permiso.codigo}"
+                                       th:checked="${rol.permisos.contains(permiso)}">
+                                <label class="form-check-label" th:for="permiso-${permiso.codigo}">
+                                    <span th:text="${permiso.descripcion}"></span>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
                 <!-- Botones -->
                 <div class="d-flex justify-content-start gap-2">
                     <button id="cancelar" type="button" class="btn btn-danger"
