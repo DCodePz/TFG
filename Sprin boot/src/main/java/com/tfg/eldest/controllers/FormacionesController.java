@@ -2,7 +2,9 @@ package com.tfg.eldest.controllers;
 
 import com.tfg.eldest.actividadformacion.ActividadFormacion;
 import com.tfg.eldest.periodo.Periodo;
+import com.tfg.eldest.services.SessionService;
 import com.tfg.eldest.usuario.Usuario;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -87,7 +89,8 @@ public class FormacionesController {
     @PostMapping(path = "crear")
     public String Crear(HttpSession session,
                         @RequestParam Map<String, Object> params,
-                        Model model) {
+                        Model model,
+                        HttpServletRequest request) {
         String periodoID = sessionService.getPeriodoID(session);
 
         // Crear un objeto RestTemplate para hacer la llamada a la API
@@ -157,7 +160,8 @@ public class FormacionesController {
     @PostMapping(path = "guardar")
     public String Guardar(HttpSession session,
                           @RequestParam Map<String, Object> params,
-                          Model model) {
+                          Model model,
+                          HttpServletRequest request) {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
@@ -225,13 +229,14 @@ public class FormacionesController {
     @PostMapping("buscar")
     public String buscarActividades(HttpSession session,
                                     @RequestParam Map<String, Object> params,
-                                    Model model) {
+                                    Model model,
+                                    HttpServletRequest request) {
         String query = (String) params.getOrDefault("query", "");
         String periodoID = sessionService.getPeriodoID(session);
 
         String fragment = "";
         if (query.isEmpty()) {
-            fragment = cuerpoController.Formaciones(session, params, model);
+            fragment = cuerpoController.Formaciones(session, params, model, request);
         } else {
             // Crear un objeto RestTemplate para hacer la llamada a la API
             RestTemplate restTemplate = new RestTemplate();

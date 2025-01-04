@@ -1,5 +1,6 @@
 <div th:fragment="content" class="row">
-    <div class="col-xl-4 col-md-4 mb-4">
+    <div th:if="${bool_VerVoluntarios}"
+         class="col-xl-4 col-md-4 mb-4">
         <div th:hx-post="@{/cabecera(url='coordinacion/voluntarios', titulo='Voluntarios')}"
              hx-target="#Main" hx-swap="innerHTML" class="btn btn-lg btn-outline-primary w-100 text-left d-flex align-items-center">
             <i class="fas fa-users fa-2x me-3"></i>
@@ -7,7 +8,8 @@
         </div>
     </div>
 
-    <div class="col-xl-4 col-md-4 mb-4">
+    <div th:if="${bool_VerRoles}"
+         class="col-xl-4 col-md-4 mb-4">
         <div th:hx-post="@{/cabecera(url='coordinacion/roles', titulo='Roles')}"
              hx-target="#Main" hx-swap="innerHTML" class="btn btn-lg btn-outline-info w-100 text-left d-flex align-items-center">
             <i class="fas fa-users-cog fa-2x me-3"></i>
@@ -16,7 +18,8 @@
     </div>
 
 
-    <div class="col-xl-4 col-md-4 mb-4">
+    <div th:if="${bool_VerPeriodos}"
+         class="col-xl-4 col-md-4 mb-4">
         <div th:hx-post="@{/cabecera(url='coordinacion/periodos', titulo='Periodos')}"
              hx-target="#Main" hx-swap="innerHTML" class="btn btn-lg btn-outline-danger w-100 text-left d-flex align-items-center">
             <i class="fas fa-calendar-alt fa-2x me-3"></i>
@@ -24,7 +27,8 @@
         </div>
     </div>
 
-    <div class="col-xl-4 col-md-4 mb-4">
+    <div th:if="${bool_VerPersonalizacion}"
+         class="col-xl-4 col-md-4 mb-4">
         <div th:hx-post="@{/cabecera(url='coordinacion/personalizacion', titulo='Personalización')}"
              hx-target="#Main" hx-swap="innerHTML" class="btn btn-lg btn-outline-success w-100 text-left d-flex align-items-center">
             <i class="fas fa-cogs fa-2x me-3"></i>

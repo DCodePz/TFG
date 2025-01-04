@@ -1,5 +1,6 @@
 <div th:fragment="content" class="row">
-    <div th:if="${coordinacion}" class="col-xl-4 col-md-4"
+    <div th:if="${bool_VerCoordinacion}"
+         class="col-xl-4 col-md-4"
          th:hx-post="@{/cabecera(url='coordinacion', titulo='Panel de coordinación')}"
          hx-target="#Main" hx-swap="innerHTML">
         <div class="card bg-primary text-white mb-4">
@@ -12,7 +13,8 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-4 col-md-4"
+    <div th:if="${bool_VerActividades}"
+         class="col-xl-4 col-md-4"
          th:hx-post="@{/cabecera(url='actividades', titulo='Actividades')}"
          hx-target="#Main" hx-swap="innerHTML">
         <div class="card bg-danger text-white mb-4">
@@ -25,7 +27,8 @@
             </div>
         </div>
     </div>
-    <div class="col-xl-4 col-md-4"
+    <div
+            th:if="${bool_VerFormaciones}"class="col-xl-4 col-md-4"
          th:hx-post="@{/cabecera(url='formaciones', titulo='Formaciones')}"
          hx-target="#Main" hx-swap="innerHTML">
         <div class="card bg-success text-white mb-4">

@@ -1,6 +1,7 @@
 <div th:fragment="content" class="container mt-5">
     <!-- Fila de encabezado con el botón para agregar cards -->
-    <div class="row mb-3">
+    <div th:if="${bool_NuevoRol}"
+         class="row mb-3">
         <div class="col-12 text-right">
             <a class="nav-link me-3"
                th:hx-post="@{/cabecera(url='coordinacion/roles/nuevo', titulo='Nuevo Rol')}"
@@ -18,12 +19,44 @@
             <div class="card">
                 <div class="card-body">
                     <h5 class="card-title" th:text="${rol.nombre}"></h5>
-                    <a class="nav-link me-3"
-                       th:hx-post="@{/cabecera(id=${rol.id}, url='coordinacion/roles/editar', titulo='Editar Rol')}"
-                       hx-target="#Main" hx-swap="innerHTML">
-                        <i class="fas fa-pencil me-1"></i>
-                        Editar
-                    </a>
+                    <div class="d-flex me-2">
+                        <a th:if="${bool_EditarRol}"
+                           class="nav-link me-3 boton_permitido"
+                           th:hx-post="@{/cabecera(id=${rol.id}, url='coordinacion/roles/editar', titulo='Editar Rol')}"
+                           hx-target="#Main" hx-swap="innerHTML">
+                            <i class="fas fa-pencil me-1"></i>
+                            Editar
+                        </a>
+                        <a class="nav-link me-3 boton_permitido"
+                           th:hx-post="@{/cabecera(id=${rol.id}, url='coordinacion/roles/ver', titulo='Ver Rol')}"
+                           hx-target="#Main" hx-swap="innerHTML">
+                            <i class="fas fa-eye me-1"></i>
+                            Ver
+                        </a>
+                        <td th:if="${bool_InHabilitarRol}"
+                            class="text-end">
+                            <a class="nav-link me-3 boton_permitido" data-bs-toggle="modal"
+                               th:data-bs-target="'#modalIn_HabilitarRol' + ${rol.id}">
+                                <!-- Icono de check si habilitado es true -->
+                                <i class="fas fa-check me-1" th:if="${rol.habilitado}"></i>
+                                <!-- Icono de cruz si habilitado es false -->
+                                <i class="fas fa-times me-1" th:if="${!rol.habilitado}"></i>
+                            </a>
+
+                            <!-- Modal -->
+                            <div th:hx-post="@{/modals/rol/in_habilitar(id=${rol.id}, nombre=${rol.nombre}, accion=${rol.habilitado ? 'inhabilitar' : 'habilitar'})}"
+                                 hx-trigger="load" hx-target="this" hx-swap="outerHTML"></div>
+                        </td>
+                        <td th:if="${!bool_InHabilitarRol}"
+                            class="text-end">
+                            <a class="nav-link me-3 boton_prohibido">
+                                <!-- Icono de check si habilitado es true -->
+                                <i class="fas fa-check me-1" th:if="${rol.habilitado}"></i>
+                                <!-- Icono de cruz si habilitado es false -->
+                                <i class="fas fa-times me-1" th:if="${!rol.habilitado}"></i>
+                            </a>
+                        </td>
+                    </div>
                 </div>
             </div>
         </div>

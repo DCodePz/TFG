@@ -1,4 +1,4 @@
-package com.tfg.eldest.controllers;
+package com.tfg.eldest.services;
 
 import com.tfg.eldest.periodo.Periodo;
 import com.tfg.eldest.usuario.Usuario;
@@ -16,10 +16,9 @@ public class SessionService {
     private String apiUrl;
 
     // Método para guardar datos en la sesión
-    public void setSession(HttpSession session, String usuarioID, String periodoID, String coordinacion) {
+    public void setSession(HttpSession session, String usuarioID, String periodoID) {
         session.setAttribute("usuarioID", usuarioID);
         session.setAttribute("periodoID", periodoID);
-        session.setAttribute("coordinacion", coordinacion);
     }
 
     // Método para obtener el id y nombre del usuario de la sesión
@@ -84,22 +83,10 @@ public class SessionService {
         session.setAttribute("periodoID", periodoID);
     }
 
-    // Método para obtener coordinacion de la sesión
-    public String getCoordinacion(HttpSession session) {
-        String coordinacion = (String) session.getAttribute("coordinacion");
-        return coordinacion != null ? coordinacion : "false";
-    }
-
-    // Método para guardar dato coordinacion de la sesión
-    public void setCoordinacion(HttpSession session, String coordinacion) {
-        session.setAttribute("coordinacion", coordinacion);
-    }
-
     // Método para eliminar los datos de la sesión
     public void removeUserSession(HttpSession session) {
         session.removeAttribute("usuarioID");
         session.removeAttribute("periodoID");
-        session.removeAttribute("coordinacion");
         session.removeAttribute("org");
         session.removeAttribute("primario");
         session.removeAttribute("secundario");
@@ -108,7 +95,28 @@ public class SessionService {
 
     // Método para verificar si un usuario está en sesión
     public boolean isUserLoggedIn(HttpSession session) {
-        return session.getAttribute("usuarioID") != null; // Devuelve true si hay un usuario en sesión
+        Object usuarioID = session.getAttribute("usuarioID");
+
+        if (usuarioID != null) {
+            // Crear un objeto RestTemplate para hacer la llamada a la API
+            RestTemplate restTemplate = new RestTemplate();
+
+            // URL de la API que devuelve las actividades
+            String apiUrl = this.apiUrl + "/usuarios/" + usuarioID + "/existe";
+
+            // Realizar la solicitud GET a la API
+            ResponseEntity<Boolean> response = restTemplate.exchange(
+                    apiUrl,
+                    HttpMethod.GET,
+                    null,
+                    new ParameterizedTypeReference<Boolean>() {
+                    }
+            );
+
+            // Obtener la lista de actividades de la respuesta
+            return response.getBody(); // Devuelve true si hay un usuario valido en sesión
+        }
+        return false;
     }
 
 

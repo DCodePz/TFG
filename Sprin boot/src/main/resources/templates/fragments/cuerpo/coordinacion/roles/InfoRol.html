@@ -16,20 +16,23 @@
                     </div>
                 </div>
 
-                <!-- Fila 2: Permisos -->
+                <!-- Fila 2 -->
                 <div class="row mb-3">
                     <div class="col-md-12">
                         <label class="form-label fw-bold">Permisos</label>
-                        <div class="form-check">
-                            <div th:each="permiso : ${permisos}">
-                                <input class="form-check-input" type="checkbox"
-                                       id="permiso-${permiso.codigo}"
-                                       name="permisos"
-                                       th:value="${permiso.codigo}"
-                                       th:checked="${rol.permisos.contains(permiso)}">
-                                <label class="form-check-label" th:for="permiso-${permiso.codigo}">
-                                    <span th:text="${permiso.descripcion}"></span>
-                                </label>
+                        <div class="form-check-group">
+                            <!-- Iterar sobre encargados -->
+                            <div class="form-check" th:each="permiso: ${permisos}">
+                                <div th:each="subEntry : ${permiso.key}">
+                                    <input class="form-check-input" type="checkbox"
+                                           th:value="${subEntry.key}"
+                                           th:id="'permiso ' + ${subEntry.key}"
+                                           th:name="'permiso ' + ${subEntry.key}"
+                                           th:checked="${permiso.value}"/>
+                                    <label class="form-check-label ms-2" th:for="'permiso ' + ${subEntry.key}">
+                                        <span th:text="${subEntry.value}"></span>
+                                    </label>
+                                </div>
                             </div>
                         </div>
                     </div>

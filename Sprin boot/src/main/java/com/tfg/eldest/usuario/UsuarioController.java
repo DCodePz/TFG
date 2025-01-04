@@ -32,9 +32,19 @@ public class UsuarioController {
         return usuarioService.getVoluntarios();
     }
 
+    @GetMapping(path = "voluntarios/habilitados")
+    public List<Usuario> getVoluntariosHabilitados() {
+        return usuarioService.getVoluntariosHabilitados();
+    }
+
     @GetMapping(path = "voluntarios/buscar/{infoBuscar}")
     public List<Usuario> getVoluntariosBusqueda(@PathVariable String infoBuscar) {
         return usuarioService.getVoluntariosBusqueda(infoBuscar);
+    }
+
+    @GetMapping(path = "{usuarioId}/existe")
+    public Boolean existeUsuario(@PathVariable Long usuarioId) {
+        return usuarioService.existeUsuario(usuarioId);
     }
 
     // POST

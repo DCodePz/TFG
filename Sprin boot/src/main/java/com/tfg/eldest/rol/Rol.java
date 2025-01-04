@@ -15,6 +15,7 @@ public class Rol {
     private Long id;
 
     private String nombre;
+    private Boolean habilitado;
 
     @ManyToMany(mappedBy = "roles")
     @JsonIgnore
@@ -46,6 +47,12 @@ public class Rol {
         this.permisos = permisos;
     }
 
+    public Rol(String nombre, Boolean habilitado, Collection<Permiso> permisos) {
+        this.nombre = nombre;
+        this.habilitado = habilitado;
+        this.permisos = permisos;
+    }
+
     //    -- Getters y Setters --
 
     public Long getId() {
@@ -62,6 +69,14 @@ public class Rol {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public Boolean getHabilitado() {
+        return habilitado;
+    }
+
+    public void setHabilitado(Boolean habilitado) {
+        this.habilitado = habilitado;
     }
 
     public Collection<Usuario> getUsuarios() {

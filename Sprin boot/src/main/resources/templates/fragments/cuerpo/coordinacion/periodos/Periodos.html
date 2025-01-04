@@ -26,7 +26,8 @@
 
             <!-- Enlaces a la derecha -->
             <div class="d-flex text-end align-items-center">
-                <a class="nav-link me-3"
+                <a th:if="${bool_NuevoPeriodo}"
+                   class="nav-link me-3"
                    th:hx-post="@{/cabecera(url='coordinacion/periodos/nuevo', titulo='Nuevo Periodo')}"
                    hx-target="#Main" hx-swap="innerHTML">
                     <i class="fas fa-add me-1"></i>
@@ -64,15 +65,23 @@
                     <td th:text="${periodo.inicio}">Fecha inicio</td>
                     <td th:text="${periodo.fin}">Fecha fin</td>
                     <td th:text="${periodo.habilitado ? 'Sí' : 'No'}">Habilitado</td>
-                    <td class="text-end"
+                    <td th:if="${bool_EditarPeriodo}"
+                        class="text-end"
                         th:hx-post="@{/cabecera(url='coordinacion/periodos/editar', titulo='Editar Periodo', id=${periodo.id})}"
                         hx-target="#Main" hx-swap="innerHTML">
-                        <a class="nav-link me-3">
+                        <a class="nav-link me-3 boton_permitido">
                             <i class="fas fa-pencil me-1"></i>
                         </a>
                     </td>
-                    <td class="text-end">
-                        <a class="nav-link me-3" data-bs-toggle="modal"
+                    <td th:if="${!bool_EditarPeriodo}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_prohibido">
+                            <i class="fas fa-pencil me-1"></i>
+                        </a>
+                    </td>
+                    <td th:if="${bool_InHabilitarPeriodo}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_permitido" data-bs-toggle="modal"
                            th:data-bs-target="'#modalIn_HabilitarPeriodo' + ${periodo.id}">
                             <!-- Icono de check si habilitado es true -->
                             <i class="fas fa-check me-1" th:if="${periodo.habilitado}"></i>
@@ -84,6 +93,15 @@
                         <div th:hx-post="@{/modals/periodo/in_habilitar(id=${periodo.id},
                         nombre=${periodo.nombre}, accion=${periodo.habilitado ? 'inhabilitar' : 'habilitar'})}"
                              hx-trigger="load" hx-target="this" hx-swap="outerHTML"></div>
+                    </td>
+                    <td th:if="${!bool_InHabilitarPeriodo}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_prohibido">
+                            <!-- Icono de check si habilitado es true -->
+                            <i class="fas fa-check me-1" th:if="${periodo.habilitado}"></i>
+                            <!-- Icono de cruz si habilitado es false -->
+                            <i class="fas fa-times me-1" th:if="${!periodo.habilitado}"></i>
+                        </a>
                     </td>
                 </tr>
                 </tbody>

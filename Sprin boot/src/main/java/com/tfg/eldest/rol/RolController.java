@@ -1,5 +1,6 @@
 package com.tfg.eldest.rol;
 
+import com.tfg.eldest.permiso.Permiso;
 import com.tfg.eldest.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +23,19 @@ public class RolController {
         return rolService.getRoles();
     }
 
+    @GetMapping(path = "habilitados")
+    public List<Rol> getRolesHabilitados() {
+        return rolService.getRolesHabilitados();
+    }
+
     @GetMapping(path = "{rolId}")
     public Rol getRol(@PathVariable Long rolId) {
         return rolService.getRol(rolId);
+    }
+
+    @GetMapping(path = "{rolId}/permisos")
+    public List<Permiso> permisos(@PathVariable Long rolId) {
+        return rolService.permisos(rolId);
     }
 
     // POST
@@ -34,6 +45,11 @@ public class RolController {
     }
 
     // PUT
+    @PutMapping(path = "invertirHabilitado/{rolId}")
+    public void invertirHabilitado(@PathVariable Long rolId) {
+        rolService.invertirHabilitado(rolId);
+    }
+
     @PutMapping(path = "guardar/{rolId}")
     public void guardarRol(@PathVariable Long rolId,
                                @RequestBody(required = false) Rol rolModificado) {

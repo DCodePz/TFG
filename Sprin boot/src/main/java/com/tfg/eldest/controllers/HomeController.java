@@ -1,7 +1,10 @@
 package com.tfg.eldest.controllers;
 
 import com.tfg.eldest.periodo.Periodo;
+import com.tfg.eldest.services.PermisosService;
+import com.tfg.eldest.services.SessionService;
 import com.tfg.eldest.usuario.Usuario;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,12 +30,16 @@ public class HomeController {
     private String apiUrl;
 
     @Autowired
+    private PermisosService permisosService;
+
+    @Autowired
     private SessionService sessionService;
 
     @GetMapping
     public String home(HttpSession session,
                        @RequestParam Map<String, Object> params,
-                       Model model) {
+                       Model model,
+                       HttpServletRequest request) {
         sessionService.removeUserSession(session);
         return "Web";
     }
@@ -40,7 +47,8 @@ public class HomeController {
     @GetMapping(path = "app")
     public String app(HttpSession session,
                       @RequestParam Map<String, Object> params,
-                      Model model) {
+                      Model model,
+                      HttpServletRequest request) {
         return "Base";
     }
 
@@ -91,7 +99,8 @@ public class HomeController {
     @PostMapping(path = "login")
     public String login(HttpSession session,
                         @RequestParam Map<String, Object> params,
-                        Model model) {
+                        Model model,
+                        HttpServletRequest request) {
         String id = (String) params.get("id");
         String password = (String) params.get("password");
 
@@ -114,10 +123,8 @@ public class HomeController {
             // Obtener la lista de actividades de la respuesta
             Usuario usuario = response.getBody();
 
-            if (usuario.getPassword().equals(password)) {
-                String coordinador = usuario.getRoles().stream()
-                        .anyMatch(rol -> "Coordinador".equals(rol.getNombre())) ? "true" : "false";
-                sessionService.setSession(session, id, obtenerPeriodoActual(), coordinador);
+            if (usuario.getPassword().equals(password) && usuario.getHabilitado()) {
+                sessionService.setSession(session, id, obtenerPeriodoActual());
                 return "pantallas/App :: content";
             }
 
@@ -128,7 +135,8 @@ public class HomeController {
     @GetMapping(path = "index")
     public String index(HttpSession session,
                         @RequestParam Map<String, Object> params,
-                        Model model) {
+                        Model model,
+                        HttpServletRequest request) {
         boolean loggeado = sessionService.isUserLoggedIn(session);
         if (loggeado) {
             return "pantallas/App :: content";
@@ -140,9 +148,10 @@ public class HomeController {
     @GetMapping(path = "inicio")
     public String inicioGet(HttpSession session,
                             @RequestParam Map<String, Object> params,
-                            Model model) {
+                            Model model,
+                            HttpServletRequest request) {
         String nombreUsuario = sessionService.getNombreUsuarioID(session);
-        Boolean coordinacion = Boolean.parseBoolean(sessionService.getCoordinacion(session));
+        Boolean coordinacion = permisosService.comprobarPermisos(sessionService.getUsuarioID(session),"/cuerpo/coordinacion");
         String nombrePeriodo = sessionService.getNombrePeriodo(session);
         String primario = sessionService.getPrimario(session);
         String secundario = sessionService.getSecundario(session);
@@ -161,10 +170,10 @@ public class HomeController {
     @PostMapping(path = "inicio")
     public String inicioPost(HttpSession session,
                              @RequestParam Map<String, Object> params,
-                             Model model) {
+                             Model model,
+                             HttpServletRequest request) {
         String nombreUsuario = sessionService.getNombreUsuarioID(session);
-        Boolean coordinacion = Boolean.parseBoolean(sessionService.getCoordinacion(session));
-        String periodoID = (String) params.getOrDefault("periodo", "Indefinido");
+        Boolean coordinacion = permisosService.comprobarPermisos(sessionService.getUsuarioID(session),"/cuerpo/coordinacion");        String periodoID = (String) params.getOrDefault("periodo", "Indefinido");
         String primario = sessionService.getPrimario(session);
         String secundario = sessionService.getSecundario(session);
         String logo = sessionService.getLogo(session);
@@ -185,7 +194,8 @@ public class HomeController {
     @PostMapping(path = "cabecera")
     public String Cabecera(HttpSession session,
                            @RequestParam Map<String, Object> params,
-                           Model model) {
+                           Model model,
+                           HttpServletRequest request) {
         String url = (String) params.getOrDefault("url", "paneldecontrol");
         String titulo = (String) params.getOrDefault("titulo", "Título");
         String id = (String) params.getOrDefault("id", null);

@@ -1,5 +1,7 @@
 package com.tfg.eldest.controllers;
 
+import com.tfg.eldest.services.SessionService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,8 +20,9 @@ public class PersonalizacionController {
 
     @PostMapping(path = "cambiar")
     public String CambiarDatos(HttpSession session,
-                              @RequestParam Map<String, Object> params,
-                              Model model) {
+                               @RequestParam Map<String, Object> params,
+                               Model model,
+                               HttpServletRequest request) {
 
         String org = (String) params.get("org");
         String primario = (String) params.get("primario");

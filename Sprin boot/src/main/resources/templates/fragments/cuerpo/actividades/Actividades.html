@@ -26,9 +26,10 @@
 
             <!-- Enlaces a la derecha -->
             <div class="d-flex text-end align-items-center">
-                <a class="nav-link me-3"
+                <a th:if="${bool_NuevaActividad}"
+                   class="nav-link me-3"
                    th:hx-post="@{/cabecera(url='actividades/nueva', titulo='Nueva Actividad')}"
-                   hx-target="#Main" hx-swap="innerHTML">
+                   hx-target="#Main" hx-swap="innerHTML" >
                     <i class="fas fa-add me-1"></i>
                     Nueva actividad
                 </a>
@@ -72,15 +73,23 @@
                             <span th:text="${encargado.id} + ' - ' + ${encargado.nombre} + ' ' + ${encargado.apellidos}"></span>
                         </div>
                     </td>
-                    <td class="text-end"
+                    <td th:if="${bool_EditarActividad}"
+                        class="text-end"
                         th:hx-post="@{/cabecera(url='actividades/editar', titulo='Editar Actividad', id=${actividad.id})}"
                         hx-target="#Main" hx-swap="innerHTML">
-                        <a class="nav-link me-3">
+                        <a class="nav-link me-3 boton_permitido">
                             <i class="fas fa-pencil me-1"></i>
                         </a>
                     </td>
-                    <td class="text-end">
-                        <a class="nav-link me-3" data-bs-toggle="modal"
+                    <td th:if="${!bool_EditarActividad}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_prohibido">
+                            <i class="fas fa-pencil me-1"></i>
+                        </a>
+                    </td>
+                    <td th:if="${bool_EliminarActividad}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_permitido" data-bs-toggle="modal"
                            th:data-bs-target="'#modalEliminarActividad' + ${actividad.id}">
                             <i class="fas fa-trash me-1"></i>
                         </a>
@@ -89,15 +98,28 @@
                         <div th:hx-post="@{/modals/actividad/eliminar(id=${actividad.id}, titulo=${actividad.titulo})}"
                              hx-trigger="load" hx-target="this" hx-swap="outerHTML"></div>
                     </td>
+                    <td th:if="${!bool_EliminarActividad}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_prohibido">
+                            <i class="fas fa-trash me-1"></i>
+                        </a>
+                    </td>
                     <td class="text-end">
                         <a class="nav-link me-3" data-bs-toggle="modal" data-bs-target="#modalNuevaActividad">
                             <i class="fas fa-thumbs-up me-1"></i>
                         </a>
                     </td>
-                    <td class="text-end">
-                        <a class="nav-link me-3"
+                    <td th:if="${bool_ImprimirActividad}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_permitido"
                            th:href="@{/pdfs/generar/Actividad/{id}(id=${actividad.id})}"
                            target="_blank">
+                            <i class="fas fa-print me-1"></i>
+                        </a>
+                    </td>
+                    <td th:if="${!bool_ImprimirActividad}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_prohibido">
                             <i class="fas fa-print me-1"></i>
                         </a>
                     </td>

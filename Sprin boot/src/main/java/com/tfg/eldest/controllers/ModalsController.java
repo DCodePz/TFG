@@ -1,6 +1,8 @@
 package com.tfg.eldest.controllers;
 
 import com.tfg.eldest.periodo.Periodo;
+import com.tfg.eldest.services.SessionService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,7 +29,8 @@ public class ModalsController {
     @GetMapping(path = "periodo/cambiar")
     public String cambiarPeriodo(HttpSession session,
                                  @RequestParam Map<String, Object> params,
-                                 Model model) {
+                                 Model model,
+                                 HttpServletRequest request) {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
@@ -52,8 +55,9 @@ public class ModalsController {
 
     @PostMapping(path = "periodo/in_habilitar")
     public String in_hablitarPeriodo(HttpSession session,
-                                        @RequestParam Map<String, Object> params,
-                                        Model model) {
+                                     @RequestParam Map<String, Object> params,
+                                     Model model,
+                                     HttpServletRequest request) {
         String id = (String) params.getOrDefault("id", "");
         String nombre = (String) params.getOrDefault("nombre", "");
         String accion = (String) params.getOrDefault("accion", "");
@@ -66,7 +70,8 @@ public class ModalsController {
     @PostMapping(path = "actividad/eliminar")
     public String eliminarActividad(HttpSession session,
                                     @RequestParam Map<String, Object> params,
-                                    Model model) {
+                                    Model model,
+                                    HttpServletRequest request) {
         String id = (String) params.getOrDefault("id", "");
         String titulo = (String) params.getOrDefault("titulo", "");
         model.addAttribute("idActividad", id);
@@ -77,7 +82,8 @@ public class ModalsController {
     @PostMapping(path = "formacion/eliminar")
     public String eliminarFormacion(HttpSession session,
                                     @RequestParam Map<String, Object> params,
-                                    Model model) {
+                                    Model model,
+                                    HttpServletRequest request) {
         String id = (String) params.getOrDefault("id", "");
         String titulo = (String) params.getOrDefault("titulo", "");
         model.addAttribute("idFormacion", id);
@@ -88,7 +94,8 @@ public class ModalsController {
     @PostMapping(path = "voluntario/in_habilitar")
     public String in_hablitarVoluntario(HttpSession session,
                                         @RequestParam Map<String, Object> params,
-                                        Model model) {
+                                        Model model,
+                                        HttpServletRequest request) {
         String id = (String) params.getOrDefault("id", "");
         String nombre = (String) params.getOrDefault("nombre", "");
         String accion = (String) params.getOrDefault("accion", "");
@@ -96,5 +103,19 @@ public class ModalsController {
         model.addAttribute("nombre", nombre);
         model.addAttribute("accion", accion);
         return "fragments/modals/ModalesVoluntarios :: modalIn_HabilitarVoluntario";
+    }
+
+    @PostMapping(path = "rol/in_habilitar")
+    public String in_hablitarRol(HttpSession session,
+                                        @RequestParam Map<String, Object> params,
+                                        Model model,
+                                        HttpServletRequest request) {
+        String id = (String) params.getOrDefault("id", "");
+        String nombre = (String) params.getOrDefault("nombre", "");
+        String accion = (String) params.getOrDefault("accion", "");
+        model.addAttribute("idRol", id);
+        model.addAttribute("nombre", nombre);
+        model.addAttribute("accion", accion);
+        return "fragments/modals/ModalesRoles :: modalIn_HabilitarRol";
     }
 }

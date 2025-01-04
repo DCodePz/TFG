@@ -26,7 +26,8 @@
 
             <!-- Enlaces a la derecha -->
             <div class="d-flex text-end align-items-center">
-                <a class="nav-link me-3"
+                <a th:if="${bool_NuevoVoluntario}"
+                   class="nav-link me-3"
                    th:hx-post="@{/cabecera(url='coordinacion/voluntarios/nuevo', titulo='Nuevo Voluntario')}"
                    hx-target="#Main" hx-swap="innerHTML">
                     <i class="fas fa-add me-1"></i>
@@ -68,15 +69,23 @@
                         </div>
                     </td>
                     <td th:text="${voluntario.habilitado ? 'Sí' : 'No'}">Habilitado</td>
-                    <td class="text-end"
+                    <td th:if="${bool_EditarVoluntario}"
+                        class="text-end"
                         th:hx-post="@{/cabecera(url='coordinacion/voluntarios/editar', titulo='Editar Voluntario', id=${voluntario.id})}"
                         hx-target="#Main" hx-swap="innerHTML">
-                        <a class="nav-link me-3">
+                        <a class="nav-link me-3 boton_permitido">
                             <i class="fas fa-pencil me-1"></i>
                         </a>
                     </td>
-                    <td class="text-end">
-                        <a class="nav-link me-3" data-bs-toggle="modal"
+                    <td th:if="${!bool_EditarVoluntario}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_prohibido">
+                            <i class="fas fa-pencil me-1"></i>
+                        </a>
+                    </td>
+                    <td th:if="${bool_InHabilitarVoluntario}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_permitido" data-bs-toggle="modal"
                            th:data-bs-target="'#modalIn_HabilitarVoluntario' + ${voluntario.id}">
                             <!-- Icono de check si habilitado es true -->
                             <i class="fas fa-check me-1" th:if="${voluntario.habilitado}"></i>
@@ -88,6 +97,15 @@
                         <div th:hx-post="@{/modals/voluntario/in_habilitar(id=${voluntario.id},
                         nombre=${voluntario.nombre} + ' ' + ${voluntario.apellidos}, accion=${voluntario.habilitado ? 'inhabilitar' : 'habilitar'})}"
                              hx-trigger="load" hx-target="this" hx-swap="outerHTML"></div>
+                    </td>
+                    <td th:if="${!bool_InHabilitarVoluntario}"
+                        class="text-end">
+                        <a class="nav-link me-3 boton_prohibido">
+                            <!-- Icono de check si habilitado es true -->
+                            <i class="fas fa-check me-1" th:if="${voluntario.habilitado}"></i>
+                            <!-- Icono de cruz si habilitado es false -->
+                            <i class="fas fa-times me-1" th:if="${!voluntario.habilitado}"></i>
+                        </a>
                     </td>
                 </tr>
                 </tbody>

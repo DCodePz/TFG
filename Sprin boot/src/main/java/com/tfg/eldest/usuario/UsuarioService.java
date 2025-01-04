@@ -5,7 +5,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class UsuarioService {
@@ -27,6 +26,10 @@ public class UsuarioService {
 
     public List<Usuario> getVoluntarios() {
         return usuarioRepository.getVoluntarios();
+    }
+
+    public List<Usuario> getVoluntariosHabilitados() {
+        return usuarioRepository.getVoluntariosHabilitados();
     }
 
     // TODO: Revisar restricciones de campos que haya que comprobar
@@ -82,5 +85,11 @@ public class UsuarioService {
 
     public List<Usuario> getVoluntariosBusqueda(String infoBuscar) {
         return usuarioRepository.getVoluntariosBusqueda(infoBuscar);
+    }
+
+    public Boolean existeUsuario(Long usuarioId) {
+        Object tmp = usuarioRepository.getUsuario(usuarioId);
+        System.out.println(tmp);
+        return tmp != null;
     }
 }

@@ -1,9 +1,10 @@
 package com.tfg.eldest.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
-import com.tfg.eldest.actividadformacion.ActividadFormacion;
 import com.tfg.eldest.rol.Rol;
+import com.tfg.eldest.services.SessionService;
 import com.tfg.eldest.usuario.Usuario;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -18,7 +19,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -67,7 +67,8 @@ public class VoluntariosController {
     @PostMapping(path = "crear")
     public String Crear(HttpSession session,
                         @RequestParam Map<String, Object> params,
-                        Model model) throws JsonProcessingException {
+                        Model model,
+                        HttpServletRequest request) throws JsonProcessingException {
 
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
@@ -116,7 +117,8 @@ public class VoluntariosController {
     @PostMapping(path = "guardar")
     public String Guardar(HttpSession session,
                           @RequestParam Map<String, Object> params,
-                          Model model) throws JsonProcessingException {
+                          Model model,
+                          HttpServletRequest request) throws JsonProcessingException {
         // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
@@ -164,12 +166,13 @@ public class VoluntariosController {
     @PostMapping(path = "buscar")
     public String buscarVoluntarios(HttpSession session,
                                     @RequestParam Map<String, Object> params,
-                                    Model model) {
+                                    Model model,
+                                    HttpServletRequest request) {
         String query = (String) params.getOrDefault("query", "");
 
         String fragment = "";
         if (query.isEmpty()) {
-            fragment = cuerpoController.Voluntarios(session, params, model);
+            fragment = cuerpoController.Voluntarios(session, params, model, request);
         } else {
             // Crear un objeto RestTemplate para hacer la llamada a la API
             RestTemplate restTemplate = new RestTemplate();
