@@ -2,22 +2,19 @@ package com.tfg.eldest.frontend.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tfg.eldest.backend.rol.Rol;
-import com.tfg.eldest.frontend.services.SessionService;
 import com.tfg.eldest.backend.usuario.Usuario;
+import com.tfg.eldest.frontend.services.ApiTemplateService;
+import com.tfg.eldest.frontend.services.PermisosService;
+import com.tfg.eldest.frontend.services.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,32 +23,27 @@ import java.util.Map;
 @Controller
 @RequestMapping("/coordinacion/voluntarios")
 public class VoluntariosController {
-    @Value("${api.url}")  // Cargar la URL desde application.properties
-    private String apiUrl;
-
+    // -- Servicios --
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private PermisosService permisosService;
+    @Autowired
+    private ApiTemplateService apiTemplateService;
+    // ---------------
 
     @Autowired
     private CuerpoController cuerpoController;
 
     private List<Rol> obtenerRoles(@RequestParam Map<String, Object> params) {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
-
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/roles";
-
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<List<Rol>> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Rol>>() {
-                }
+        // Llamada a la api
+        ResponseEntity<List<Rol>> response = apiTemplateService.llamadaApi(
+                "/roles",
+                "GET",
+                "Roles",
+                null
         );
 
-        // Obtener la lista de actividades de la respuesta
         List<Rol> roles = response.getBody();
 
         List<Rol> seleccionados = new ArrayList<>();
@@ -69,49 +61,44 @@ public class VoluntariosController {
                         @RequestParam Map<String, Object> params,
                         Model model,
                         HttpServletRequest request) throws JsonProcessingException {
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
+            Usuario nuevoVoluntario = new Usuario(
+                    Long.parseLong((String) params.get("id")),
+                    (String) params.get("nombre"),
+                    (String) params.get("apellidos"),
+                    (String) params.get("email"),
+                    (String) params.get("password"),
+                    "Voluntario",
+                    obtenerRoles(params)
+            );
 
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
+            // Llamada a la api
+            ResponseEntity<Usuario> response = apiTemplateService.llamadaApi(
+                    "/usuarios/crear",
+                    "POST",
+                    "Void",
+                    nuevoVoluntario
+            );
 
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/usuarios/crear";
+            // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Voluntario creado exitosamente");
+            } else {
+                System.out.println("Error al crear el voluntario: " + response.getStatusCode());
+            }
 
-        // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
-        Usuario nuevoVoluntario = new Usuario(
-                Long.parseLong((String) params.get("id")),
-                (String) params.get("nombre"),
-                (String) params.get("apellidos"),
-                (String) params.get("email"),
-                (String) params.get("password"),
-                "Voluntario",
-                obtenerRoles(params)
-        );
+            String url = (String) params.getOrDefault("url", "paneldecontrol");
+            String titulo = (String) params.getOrDefault("tit", "Título");
 
-        // Crear la entidad Http que contiene el cuerpo de la solicitud
-        HttpEntity<Usuario> requestEntity = new HttpEntity<>(nuevoVoluntario);
-
-        // Realizar la solicitud POST a la API de actividades
-        ResponseEntity<Void> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.POST,
-                requestEntity,
-                Void.class
-        );
-
-        // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
-        if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Voluntario creado exitosamente");
-        } else {
-            System.out.println("Error al crear el voluntario: " + response.getStatusCode());
+            model.addAttribute("url", url);
+            model.addAttribute("titulo", titulo);
+            model.addAttribute("org", sessionService.getOrg(session));
+            return "fragments/Cabecera :: content";
         }
-
-        String url = (String) params.getOrDefault("url", "paneldecontrol");
-        String titulo = (String) params.getOrDefault("tit", "Título");
-
-        model.addAttribute("url", url);
-        model.addAttribute("titulo", titulo);
-        model.addAttribute("org", sessionService.getOrg(session));
-        return "fragments/Cabecera :: content";
+        return "Web";
     }
 
     @PostMapping(path = "guardar")
@@ -119,48 +106,44 @@ public class VoluntariosController {
                           @RequestParam Map<String, Object> params,
                           Model model,
                           HttpServletRequest request) throws JsonProcessingException {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
+            Usuario nuevoVoluntario = new Usuario(
+                    Long.parseLong((String) params.get("id")),
+                    (String) params.get("nombre"),
+                    (String) params.get("apellidos"),
+                    (String) params.get("email"),
+                    (String) params.get("password"),
+                    "Voluntario",
+                    obtenerRoles(params)
+            );
 
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/usuarios/guardar/" + params.get("id");
+            // Llamada a la api
+            ResponseEntity<Usuario> response = apiTemplateService.llamadaApi(
+                    "/usuarios/guardar/" + params.get("id"),
+                    "PUT",
+                    "Void",
+                    nuevoVoluntario
+            );
 
-        // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
-        Usuario nuevaVoluntario = new Usuario(
-                Long.parseLong((String) params.get("id")),
-                (String) params.get("nombre"),
-                (String) params.get("apellidos"),
-                (String) params.get("email"),
-                (String) params.get("password"),
-                "Voluntario",
-                obtenerRoles(params)
-        );
+            // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Voluntario editado exitosamente");
+            } else {
+                System.out.println("Error al editar el voluntarioi: " + response.getStatusCode());
+            }
 
-        // Crear la entidad Http que contiene el cuerpo de la solicitud
-        HttpEntity<Usuario> requestEntity = new HttpEntity<>(nuevaVoluntario);
+            String url = (String) params.getOrDefault("url", "paneldecontrol");
+            String titulo = (String) params.getOrDefault("tit", "Título");
 
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<Void> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.PUT,
-                requestEntity,
-                Void.class
-        );
-
-        // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
-        if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Voluntario editado exitosamente");
-        } else {
-            System.out.println("Error al editar el voluntarioi: " + response.getStatusCode());
+            model.addAttribute("url", url);
+            model.addAttribute("titulo", titulo);
+            model.addAttribute("org", sessionService.getOrg(session));
+            return "fragments/Cabecera :: content";
         }
-
-        String url = (String) params.getOrDefault("url", "paneldecontrol");
-        String titulo = (String) params.getOrDefault("tit", "Título");
-
-        model.addAttribute("url", url);
-        model.addAttribute("titulo", titulo);
-        model.addAttribute("org", sessionService.getOrg(session));
-        return "fragments/Cabecera :: content";
+        return "Web";
     }
 
     @PostMapping(path = "buscar")
@@ -168,35 +151,30 @@ public class VoluntariosController {
                                     @RequestParam Map<String, Object> params,
                                     Model model,
                                     HttpServletRequest request) {
-        String query = (String) params.getOrDefault("query", "");
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            String query = (String) params.getOrDefault("query", "");
 
-        String fragment = "";
-        if (query.isEmpty()) {
-            fragment = cuerpoController.Voluntarios(session, params, model, request);
-        } else {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
+            String fragment = "";
+            if (query.isEmpty()) {
+                fragment = cuerpoController.Voluntarios(session, params, model, request);
+            } else {
+                // Llamada a la api
+                ResponseEntity<List<Usuario>> response = apiTemplateService.llamadaApi(
+                        "/usuarios/voluntarios/buscar/" + query,
+                        "GET",
+                        "Usuarios",
+                        null
+                );
 
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/usuarios/voluntarios/buscar/" + query;
+                model.addAttribute("voluntarios", response.getBody());
 
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<List<Usuario>> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Usuario>>() {
-                    }
-            );
+                fragment = "fragments/cuerpo/coordinacion/voluntarios/Voluntarios :: content";
+            }
 
-            // Obtener la lista de actividades de la respuesta
-            List<Usuario> voluntarios = response.getBody();
-
-            model.addAttribute("voluntarios", voluntarios);
-
-            fragment = "fragments/cuerpo/coordinacion/voluntarios/Voluntarios :: content";
+            return fragment;
         }
-
-        return fragment;
+        return "Web";
     }
 }

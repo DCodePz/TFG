@@ -3,23 +3,19 @@ package com.tfg.eldest.frontend.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tfg.eldest.backend.actividadformacion.ActividadFormacion;
 import com.tfg.eldest.backend.periodo.Periodo;
+import com.tfg.eldest.backend.usuario.Usuario;
+import com.tfg.eldest.frontend.services.ApiTemplateService;
 import com.tfg.eldest.frontend.services.PermisosService;
 import com.tfg.eldest.frontend.services.SessionService;
-import com.tfg.eldest.backend.usuario.Usuario;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,35 +25,27 @@ import java.util.Map;
 @Controller
 @RequestMapping("/actividades")
 public class ActividadesController {
-    @Value("${api.url}")  // Cargar la URL desde application.properties
-    private String apiUrl;
-
-    @Autowired
-    private PermisosService permisosService;
-
+    // -- Servicios --
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private PermisosService permisosService;
+    @Autowired
+    private ApiTemplateService apiTemplateService;
+    // ---------------
 
     @Autowired
     private CuerpoController cuerpoController;
 
     private List<Usuario> obtenerEncargados(@RequestParam Map<String, Object> params) {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
-
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/usuarios";
-
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<List<Usuario>> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Usuario>>() {
-                }
+        // Llamada a la api
+        ResponseEntity<List<Usuario>> response = apiTemplateService.llamadaApi(
+                "/usuarios",
+                "GET",
+                "Usuarios",
+                null
         );
 
-        // Obtener la lista de actividades de la respuesta
         List<Usuario> usuarios = response.getBody();
 
         List<Usuario> encargados = new ArrayList<>();
@@ -71,24 +59,15 @@ public class ActividadesController {
     }
 
     private Periodo obtenerPeriodoActual(String periodoID) {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
-
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/periodos/" + periodoID;
-
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<Periodo> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<Periodo>() {
-                }
+        // Llamada a la api
+        ResponseEntity<Periodo> response = apiTemplateService.llamadaApi(
+                "/periodos/" + periodoID,
+                "GET",
+                "Periodo",
+                null
         );
 
-        // Obtener la lista de actividades de la respuesta
-        Periodo periodo = response.getBody();
-        return periodo;
+        return response.getBody();
     }
 
     @PostMapping(path = "crear")
@@ -100,15 +79,9 @@ public class ActividadesController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-
             String periodoID = sessionService.getPeriodoID(session);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/actividades/crear/" + periodoID;
-
+            // Procesar grupo_edad
             String grupo_edad = "";
             if (params.get("pequeños_pequeños") != null && !params.get("pequeños_pequeños").equals("")) {
                 grupo_edad += params.get("pequeños_pequeños") + ", ";
@@ -140,15 +113,12 @@ public class ActividadesController {
                     obtenerPeriodoActual(sessionService.getPeriodoID(session))
             );
 
-            // Crear la entidad Http que contiene el cuerpo de la solicitud
-            HttpEntity<ActividadFormacion> requestEntity = new HttpEntity<>(nuevaActividad);
-
-            // Realizar la solicitud POST a la API de actividades
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.POST,
-                    requestEntity,
-                    Void.class
+            // Llamada a la api
+            ResponseEntity<ActividadFormacion> response = apiTemplateService.llamadaApi(
+                    "/actividades/crear/" + periodoID,
+                    "POST",
+                    "Void",
+                    nuevaActividad
             );
 
             // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
@@ -177,12 +147,7 @@ public class ActividadesController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/actividades/guardar/" + params.get("id");
-
+            // Procesar grupo_edad
             String grupo_edad = "";
             if (params.get("pequeños_pequeños") != null && !params.get("pequeños_pequeños").equals("")) {
                 grupo_edad += params.get("pequeños_pequeños") + ", ";
@@ -214,15 +179,12 @@ public class ActividadesController {
                     obtenerPeriodoActual(sessionService.getPeriodoID(session))
             );
 
-            // Crear la entidad Http que contiene el cuerpo de la solicitud
-            HttpEntity<ActividadFormacion> requestEntity = new HttpEntity<>(nuevaActividad);
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.PUT,
-                    requestEntity,
-                    Void.class
+            // Llamada a la api
+            ResponseEntity<ActividadFormacion> response = apiTemplateService.llamadaApi(
+                    "/actividades/guardar/" + params.get("id"),
+                    "PUT",
+                    "Void",
+                    nuevaActividad
             );
 
             // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
@@ -258,25 +220,15 @@ public class ActividadesController {
             if (query.isEmpty()) {
                 fragment = cuerpoController.Actividades(session, params, model, request);
             } else {
-                // Crear un objeto RestTemplate para hacer la llamada a la API
-                RestTemplate restTemplate = new RestTemplate();
-
-                // URL de la API que devuelve las actividades
-                String apiUrl = this.apiUrl + "/actividades/buscar/" + query + "/" + periodoID;
-
-                // Realizar la solicitud GET a la API de actividades
-                ResponseEntity<List<ActividadFormacion>> response = restTemplate.exchange(
-                        apiUrl,
-                        HttpMethod.GET,
-                        null,
-                        new ParameterizedTypeReference<List<ActividadFormacion>>() {
-                        }
+                // Llamada a la api
+                ResponseEntity<ActividadFormacion> response = apiTemplateService.llamadaApi(
+                        "/actividades/buscar/" + query + "/" + periodoID,
+                        "GET",
+                        "ActividadesFormaciones",
+                        null
                 );
 
-                // Obtener la lista de actividades de la respuesta
-                List<ActividadFormacion> actividades = response.getBody();
-
-                model.addAttribute("actividades", actividades);
+                model.addAttribute("actividades", response.getBody());
 
                 fragment = "fragments/cuerpo/actividades/Actividades :: content";
             }

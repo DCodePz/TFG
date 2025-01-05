@@ -4,22 +4,19 @@ import com.tfg.eldest.backend.actividadformacion.ActividadFormacion;
 import com.tfg.eldest.backend.periodo.Periodo;
 import com.tfg.eldest.backend.permiso.Permiso;
 import com.tfg.eldest.backend.rol.Rol;
+import com.tfg.eldest.backend.usuario.Usuario;
+import com.tfg.eldest.frontend.services.ApiTemplateService;
 import com.tfg.eldest.frontend.services.PermisosService;
 import com.tfg.eldest.frontend.services.SessionService;
-import com.tfg.eldest.backend.usuario.Usuario;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
@@ -31,76 +28,47 @@ import static java.lang.Boolean.TRUE;
 @Controller
 @RequestMapping("/cuerpo")
 public class CuerpoController {
-    @Value("${api.url}")  // Cargar la URL desde application.properties
-    private String apiUrl;
-
+    // -- Servicios --
     @Autowired
     private SessionService sessionService;
-
     @Autowired
     private PermisosService permisosService;
+    @Autowired
+    private ApiTemplateService apiTemplateService;
+    // ---------------
 
     private List<Usuario> obtenerVoluntariosHabilitados() {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
-
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/usuarios/voluntarios/habilitados";
-
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<List<Usuario>> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Usuario>>() {
-                }
+        // Llamada a la api
+        ResponseEntity<List<Usuario>> response = apiTemplateService.llamadaApi(
+                "/usuarios/voluntarios/habilitados",
+                "GET",
+                "Usuarios",
+                null
         );
 
-        // Obtener la lista de actividades de la respuesta
-        List<Usuario> usuarios = response.getBody();
-
-        return usuarios;
+        return response.getBody();
     }
 
     private List<Rol> obtenerRoles() {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
-
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/roles/habilitados";
-
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<List<Rol>> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Rol>>() {
-                }
+        // Llamada a la api
+        ResponseEntity<List<Rol>> response = apiTemplateService.llamadaApi(
+                "/roles/habilitados",
+                "GET",
+                "Roles",
+                null
         );
 
-        // Obtener la lista de actividades de la respuesta
-        List<Rol> roles = response.getBody();
-
-        return roles;
+        return response.getBody();
     }
 
     private List<Permiso> obtenerPermisos() {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
-
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/permisos";
-
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<List<Permiso>> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Permiso>>() {
-                }
+        // Llamada a la api
+        ResponseEntity<List<Permiso>> response = apiTemplateService.llamadaApi(
+                "/permisos",
+                "GET",
+                "Permisos",
+                null
         );
-
-        // Obtener la lista de actividades de la respuesta
 
         return response.getBody();
     }
@@ -114,11 +82,6 @@ public class CuerpoController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-
-//            Boolean coordinacion = Boolean.valueOf(sessionService.getCoordinacion(session)); //TODO: Evitar esto
-//
-//            model.addAttribute("coordinacion", coordinacion);
-
             Boolean tmp = permisosService.comprobarPermisos(usuarioId, "/cuerpo/coordinacion");
             model.addAttribute("bool_VerCoordinacion", tmp);
             tmp = permisosService.comprobarPermisos(usuarioId, "/cuerpo/actividades");
@@ -160,25 +123,15 @@ public class CuerpoController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/usuarios/voluntarios";
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<List<Usuario>> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Usuario>>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<List<Usuario>> response = apiTemplateService.llamadaApi(
+                    "/usuarios/voluntarios",
+                    "GET",
+                    "Usuarios",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
-            List<Usuario> voluntarios = response.getBody();
-
-            model.addAttribute("voluntarios", voluntarios);
+            model.addAttribute("voluntarios", response.getBody());
 
             Boolean tmp = permisosService.comprobarPermisos(usuarioId, "/cuerpo/coordinacion/voluntarios/nuevo");
             model.addAttribute("bool_NuevoVoluntario", tmp);
@@ -199,25 +152,15 @@ public class CuerpoController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/roles/habilitados";
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<List<Rol>> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Rol>>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<List<Rol>> response = apiTemplateService.llamadaApi(
+                    "/roles/habilitados",
+                    "GET",
+                    "Roles",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
-            List<Rol> roles = response.getBody();
-
-            model.addAttribute("roles", roles);
+            model.addAttribute("roles", response.getBody());
             return "fragments/cuerpo/coordinacion/voluntarios/NuevoVoluntario :: content";
         }
         return "Web";
@@ -233,24 +176,15 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String voluntarioID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/usuarios/" + voluntarioID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Usuario> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<Usuario>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<Usuario> response = apiTemplateService.llamadaApi(
+                    "/usuarios/" + voluntarioID,
+                    "GET",
+                    "Usuario",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
             Usuario voluntario = response.getBody();
-
             model.addAttribute("voluntario", voluntario);
 
             // Procesamos los roles
@@ -290,18 +224,12 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String voluntarioID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/usuarios/invertirHabilitado/" + voluntarioID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.PUT,
-                    null,
-                    Void.class
+            // Llamada a la api
+            ResponseEntity<Void> response = apiTemplateService.llamadaApi(
+                    "/usuarios/invertirHabilitado/" + voluntarioID,
+                    "PUT",
+                    "Void",
+                    null
             );
 
             // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
@@ -324,25 +252,15 @@ public class CuerpoController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/roles";
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<List<Rol>> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Rol>>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<List<Rol>> response = apiTemplateService.llamadaApi(
+                    "/roles",
+                    "GET",
+                    "Roles",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
-            List<Rol> roles = response.getBody();
-
-            model.addAttribute("roles", roles);
+            model.addAttribute("roles", response.getBody());
 
             Boolean tmp = permisosService.comprobarPermisos(usuarioId, "/cuerpo/coordinacion/roles/nuevo");
             model.addAttribute("bool_NuevoRol", tmp);
@@ -363,25 +281,15 @@ public class CuerpoController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/permisos";
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<List<Permiso>> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Permiso>>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<List<Permiso>> response = apiTemplateService.llamadaApi(
+                    "/permisos",
+                    "GET",
+                    "Permisos",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
-            List<Permiso> permisos = response.getBody();
-
-            model.addAttribute("permisos", permisos);
+            model.addAttribute("permisos", response.getBody());
             return "fragments/cuerpo/coordinacion/roles/NuevoRol :: content";
         }
         return "Web";
@@ -397,24 +305,15 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String rolID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/roles/" + rolID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Rol> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<Rol>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<Rol> response = apiTemplateService.llamadaApi(
+                    "/roles/" + rolID,
+                    "GET",
+                    "Rol",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
             Rol rol = response.getBody();
-
             model.addAttribute("rol", rol);
 
             // Procesamos los permisos
@@ -431,7 +330,7 @@ public class CuerpoController {
                 }
 
                 Map<String, String> tmp = new HashMap<>();
-                tmp.put(permiso.getId().toString(), permiso.getNombre()+" - "+permiso.getDescripcion());
+                tmp.put(permiso.getId().toString(), permiso.getNombre() + " - " + permiso.getDescripcion());
                 permisos.put(tmp, encontrado);
             }
 
@@ -446,32 +345,23 @@ public class CuerpoController {
 
     @PostMapping(path = "coordinacion/roles/ver")
     public String VerRol(HttpSession session,
-                            @RequestParam Map<String, Object> params,
-                            Model model,
-                            HttpServletRequest request) {
+                         @RequestParam Map<String, Object> params,
+                         Model model,
+                         HttpServletRequest request) {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String rolID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/roles/" + rolID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Rol> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<Rol>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<Rol> response = apiTemplateService.llamadaApi(
+                    "/roles/" + rolID,
+                    "GET",
+                    "Rol",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
             Rol rol = response.getBody();
-
             model.addAttribute("rol", rol);
 
             // Procesamos los permisos
@@ -505,26 +395,20 @@ public class CuerpoController {
 
     @PostMapping(path = "coordinacion/roles/in_habilitar")
     public String in_habilitarRol(HttpSession session,
-                                         @RequestParam Map<String, Object> params,
-                                         Model model,
-                                         HttpServletRequest request) {
+                                  @RequestParam Map<String, Object> params,
+                                  Model model,
+                                  HttpServletRequest request) {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String rolID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/roles/invertirHabilitado/" + rolID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.PUT,
-                    null,
-                    Void.class
+            // Llamada a la api
+            ResponseEntity<Void> response = apiTemplateService.llamadaApi(
+                    "/roles/invertirHabilitado/" + rolID,
+                    "PUT",
+                    "Void",
+                    null
             );
 
             // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
@@ -547,25 +431,15 @@ public class CuerpoController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/periodos";
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<List<Periodo>> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Periodo>>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<List<Periodo>> response = apiTemplateService.llamadaApi(
+                    "/periodos",
+                    "GET",
+                    "Periodos",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
-            List<Periodo> periodos = response.getBody();
-
-            model.addAttribute("periodos", periodos);
+            model.addAttribute("periodos", response.getBody());
 
             Boolean tmp = permisosService.comprobarPermisos(usuarioId, "/cuerpo/coordinacion/periodos/nuevo");
             model.addAttribute("bool_NuevoPeriodo", tmp);
@@ -601,25 +475,15 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String periodoID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/periodos/" + periodoID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Periodo> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<Periodo>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<Periodo> response = apiTemplateService.llamadaApi(
+                    "/periodos/" + periodoID,
+                    "GET",
+                    "Periodo",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
-            Periodo periodo = response.getBody();
-
-            model.addAttribute("periodo", periodo);
+            model.addAttribute("periodo", response.getBody());
 
             return "fragments/cuerpo/coordinacion/periodos/InfoPeriodo :: content";
         }
@@ -636,18 +500,12 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String periodoID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/periodos/invertirHabilitado/" + periodoID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.PUT,
-                    null,
-                    Void.class
+            // Llamada a la api
+            ResponseEntity<Void> response = apiTemplateService.llamadaApi(
+                    "/periodos/invertirHabilitado/" + periodoID,
+                    "PUT",
+                    "Void",
+                    null
             );
 
             // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
@@ -686,25 +544,15 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String periodoID = sessionService.getPeriodoID(session);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/actividades/periodo/" + periodoID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<List<ActividadFormacion>> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<ActividadFormacion>>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<List<ActividadFormacion>> response = apiTemplateService.llamadaApi(
+                    "/actividades/periodo/" + periodoID,
+                    "GET",
+                    "ActividadesFormaciones",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
-            List<ActividadFormacion> actividades = response.getBody();
-
-            model.addAttribute("actividades", actividades);
+            model.addAttribute("actividades", response.getBody());
 
             Boolean tmp = permisosService.comprobarPermisos(usuarioId, "/cuerpo/actividades/nueva");
             model.addAttribute("bool_NuevaActividad", tmp);
@@ -728,7 +576,6 @@ public class CuerpoController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-
             model.addAttribute("encargados", obtenerVoluntariosHabilitados());
             return "fragments/cuerpo/actividades/NuevaActividad :: content";
         }
@@ -746,26 +593,19 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String actividadID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/actividades/" + actividadID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<ActividadFormacion> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<ActividadFormacion>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<ActividadFormacion> response = apiTemplateService.llamadaApi(
+                    "/actividades/" + actividadID,
+                    "GET",
+                    "ActividadFormacion",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
+            System.out.println(response.getBody());
             ActividadFormacion actividad = response.getBody();
+            System.out.println(actividad);
 
             model.addAttribute("actividad", actividad);
-
 
             // Procesamos la edades
             String[] partes = actividad.getGrupo_edad().split(",");
@@ -799,8 +639,6 @@ public class CuerpoController {
                 encargados.put(usuario.getId().toString(), encontrado);
             }
 
-            System.out.println(actividad);
-
             model.addAttribute("encargados", encargados);
             return "fragments/cuerpo/actividades/InfoActividad :: content";
         }
@@ -817,18 +655,12 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String actividadID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/actividades/eliminar/" + actividadID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.PUT,
-                    null,
-                    Void.class
+            // Llamada a la api
+            ResponseEntity<Void> response = apiTemplateService.llamadaApi(
+                    "/actividades/eliminar/" + actividadID,
+                    "PUT",
+                    "Void",
+                    null
             );
 
             // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
@@ -854,25 +686,15 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String periodoID = sessionService.getPeriodoID(session);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/formaciones/periodo/" + periodoID;
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<List<ActividadFormacion>> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<ActividadFormacion>>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<List<ActividadFormacion>> response = apiTemplateService.llamadaApi(
+                    "/formaciones/periodo/" + periodoID,
+                    "GET",
+                    "ActividadesFormaciones",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
-            List<ActividadFormacion> formaciones = response.getBody();
-
-            model.addAttribute("formaciones", formaciones);
+            model.addAttribute("formaciones", response.getBody());
 
             Boolean tmp = permisosService.comprobarPermisos(usuarioId, "/cuerpo/formaciones/nueva");
             model.addAttribute("bool_NuevaFormacion", tmp);
@@ -912,26 +734,17 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String formacionID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las formaciones
-            String apiUrl = this.apiUrl + "/formaciones/" + formacionID;
-
-            // Realizar la solicitud GET a la API de formaciones
-            ResponseEntity<ActividadFormacion> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<ActividadFormacion>() {
-                    }
+            // Llamada a la api
+            ResponseEntity<ActividadFormacion> response = apiTemplateService.llamadaApi(
+                    "/formaciones/" + formacionID,
+                    "GET",
+                    "ActividadFormacion",
+                    null
             );
 
-            // Obtener la lista de actividades de la respuesta
+
             ActividadFormacion formacion = response.getBody();
-
             model.addAttribute("formacion", formacion);
-
 
             // Procesamos la edades
             String[] partes = formacion.getGrupo_edad().split(",");
@@ -965,8 +778,6 @@ public class CuerpoController {
                 encargados.put(usuario.getId().toString(), encontrado);
             }
 
-            System.out.println(formacion);
-
             model.addAttribute("encargados", encargados);
             return "fragments/cuerpo/formaciones/InfoFormacion :: content";
         }
@@ -983,18 +794,12 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             String formacionID = (String) params.getOrDefault("id", null);
 
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las formaciones
-            String apiUrl = this.apiUrl + "/formaciones/eliminar/" + formacionID;
-
-            // Realizar la solicitud GET a la API de formaciones
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.PUT,
-                    null,
-                    Void.class
+            // Llamada a la api
+            ResponseEntity<Void> response = apiTemplateService.llamadaApi(
+                    "/formaciones/eliminar/" + formacionID,
+                    "PUT",
+                    "Void",
+                    null
             );
 
             // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)

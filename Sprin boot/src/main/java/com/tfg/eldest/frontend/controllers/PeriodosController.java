@@ -2,21 +2,18 @@ package com.tfg.eldest.frontend.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tfg.eldest.backend.periodo.Periodo;
+import com.tfg.eldest.frontend.services.ApiTemplateService;
+import com.tfg.eldest.frontend.services.PermisosService;
 import com.tfg.eldest.frontend.services.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,11 +22,14 @@ import java.util.Map;
 @Controller
 @RequestMapping("/coordinacion/periodos")
 public class PeriodosController {
-    @Value("${api.url}")  // Cargar la URL desde application.properties
-    private String apiUrl;
-
+    // -- Servicios --
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private PermisosService permisosService;
+    @Autowired
+    private ApiTemplateService apiTemplateService;
+    // ---------------
 
     @Autowired
     private CuerpoController cuerpoController;
@@ -39,45 +39,40 @@ public class PeriodosController {
                         @RequestParam Map<String, Object> params,
                         Model model,
                         HttpServletRequest request) throws JsonProcessingException {
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
+            Periodo nuevoPeriodo = new Periodo(
+                    (String) params.get("nombre"),
+                    LocalDate.parse((String) params.get("fechaInicio")),
+                    LocalDate.parse((String) params.get("fechaFin"))
+            );
 
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
+            // Llamada a la api
+            ResponseEntity<Periodo> response = apiTemplateService.llamadaApi(
+                    "/periodos/crear",
+                    "POST",
+                    "Void",
+                    nuevoPeriodo
+            );
 
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/periodos/crear";
+            // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Periodo creado exitosamente");
+            } else {
+                System.out.println("Error al crear el periodo: " + response.getStatusCode());
+            }
 
-        // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
-        Periodo nuevoPeriodo = new Periodo(
-                (String) params.get("nombre"),
-                LocalDate.parse((String) params.get("fechaInicio")),
-                LocalDate.parse((String) params.get("fechaFin"))
-        );
+            String url = (String) params.getOrDefault("url", "paneldecontrol");
+            String titulo = (String) params.getOrDefault("tit", "Título");
 
-        // Crear la entidad Http que contiene el cuerpo de la solicitud
-        HttpEntity<Periodo> requestEntity = new HttpEntity<>(nuevoPeriodo);
-
-        // Realizar la solicitud POST a la API de actividades
-        ResponseEntity<Void> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.POST,
-                requestEntity,
-                Void.class
-        );
-
-        // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
-        if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Periodo creado exitosamente");
-        } else {
-            System.out.println("Error al crear el periodo: " + response.getStatusCode());
+            model.addAttribute("url", url);
+            model.addAttribute("titulo", titulo);
+            model.addAttribute("org", sessionService.getOrg(session));
+            return "fragments/Cabecera :: content";
         }
-
-        String url = (String) params.getOrDefault("url", "paneldecontrol");
-        String titulo = (String) params.getOrDefault("tit", "Título");
-
-        model.addAttribute("url", url);
-        model.addAttribute("titulo", titulo);
-        model.addAttribute("org", sessionService.getOrg(session));
-        return "fragments/Cabecera :: content";
+        return "Web";
     }
 
     @PostMapping(path = "guardar")
@@ -85,44 +80,40 @@ public class PeriodosController {
                           @RequestParam Map<String, Object> params,
                           Model model,
                           HttpServletRequest request) throws JsonProcessingException {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
+            Periodo nuevoPeriodo = new Periodo(
+                    (String) params.get("nombre"),
+                    LocalDate.parse((String) params.get("fechaInicio")),
+                    LocalDate.parse((String) params.get("fechaFin"))
+            );
 
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/periodos/guardar/" + params.get("id");
+            // Llamada a la api
+            ResponseEntity<Periodo> response = apiTemplateService.llamadaApi(
+                    "/periodos/guardar/" + params.get("id"),
+                    "PUT",
+                    "Void",
+                    nuevoPeriodo
+            );
 
-        // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
-        Periodo nuevaVoluntario = new Periodo(
-                (String) params.get("nombre"),
-                LocalDate.parse((String) params.get("fechaInicio")),
-                LocalDate.parse((String) params.get("fechaFin"))
-        );
+            // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
+            if (response.getStatusCode().is2xxSuccessful()) {
+                System.out.println("Periodo editado exitosamente");
+            } else {
+                System.out.println("Error al editar el periodo: " + response.getStatusCode());
+            }
 
-        // Crear la entidad Http que contiene el cuerpo de la solicitud
-        HttpEntity<Periodo> requestEntity = new HttpEntity<>(nuevaVoluntario);
+            String url = (String) params.getOrDefault("url", "paneldecontrol");
+            String titulo = (String) params.getOrDefault("tit", "Título");
 
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<Void> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.PUT,
-                requestEntity,
-                Void.class
-        );
-
-        // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
-        if (response.getStatusCode().is2xxSuccessful()) {
-            System.out.println("Periodo editado exitosamente");
-        } else {
-            System.out.println("Error al editar el periodo: " + response.getStatusCode());
+            model.addAttribute("url", url);
+            model.addAttribute("titulo", titulo);
+            model.addAttribute("org", sessionService.getOrg(session));
+            return "fragments/Cabecera :: content";
         }
-
-        String url = (String) params.getOrDefault("url", "paneldecontrol");
-        String titulo = (String) params.getOrDefault("tit", "Título");
-
-        model.addAttribute("url", url);
-        model.addAttribute("titulo", titulo);
-        model.addAttribute("org", sessionService.getOrg(session));
-        return "fragments/Cabecera :: content";
+        return "Web";
     }
 
     @PostMapping(path = "buscar")
@@ -130,35 +121,30 @@ public class PeriodosController {
                                  @RequestParam Map<String, Object> params,
                                  Model model,
                                  HttpServletRequest request) {
-        String query = (String) params.getOrDefault("query", "");
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            String query = (String) params.getOrDefault("query", "");
 
-        String fragment = "";
-        if (query.isEmpty()) {
-            fragment = cuerpoController.Periodos(session, params, model, request);
-        } else {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
+            String fragment = "";
+            if (query.isEmpty()) {
+                fragment = cuerpoController.Periodos(session, params, model, request);
+            } else {
+                // Llamada a la api
+                ResponseEntity<List<Periodo>> response = apiTemplateService.llamadaApi(
+                        "/periodos/buscar/" + query,
+                        "GET",
+                        "Periodos",
+                        null
+                );
 
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/periodos/buscar/" + query;
+                model.addAttribute("periodos", response.getBody());
 
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<List<Periodo>> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<List<Periodo>>() {
-                    }
-            );
+                fragment = "fragments/cuerpo/coordinacion/periodos/Periodos :: content";
+            }
 
-            // Obtener la lista de actividades de la respuesta
-            List<Periodo> periodos = response.getBody();
-
-            model.addAttribute("periodos", periodos);
-
-            fragment = "fragments/cuerpo/coordinacion/periodos/Periodos :: content";
+            return fragment;
         }
-
-        return fragment;
+        return "Web";
     }
 }

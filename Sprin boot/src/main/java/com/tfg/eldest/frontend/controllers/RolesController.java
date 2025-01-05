@@ -3,22 +3,18 @@ package com.tfg.eldest.frontend.controllers;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tfg.eldest.backend.permiso.Permiso;
 import com.tfg.eldest.backend.rol.Rol;
+import com.tfg.eldest.frontend.services.ApiTemplateService;
 import com.tfg.eldest.frontend.services.PermisosService;
 import com.tfg.eldest.frontend.services.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -27,35 +23,24 @@ import java.util.Map;
 @Controller
 @RequestMapping("/coordinacion/roles")
 public class RolesController {
-    @Value("${api.url}")  // Cargar la URL desde application.properties
-    private String apiUrl;
-
+    // -- Servicios --
     @Autowired
     private SessionService sessionService;
-
-    @Autowired
-    private CuerpoController cuerpoController;
-
     @Autowired
     private PermisosService permisosService;
+    @Autowired
+    private ApiTemplateService apiTemplateService;
+    // ---------------
 
     private List<Permiso> obtenerPermisos(@RequestParam Map<String, Object> params) {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
-
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/permisos";
-
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<List<Permiso>> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Permiso>>() {
-                }
+        // Llamada a la api
+        ResponseEntity<List<Permiso>> response = apiTemplateService.llamadaApi(
+                "/permisos",
+                "GET",
+                "Permisos",
+                null
         );
 
-        // Obtener la lista de actividades de la respuesta
         List<Permiso> permisos = response.getBody();
 
         List<Permiso> seleccionados = new ArrayList<>();
@@ -65,7 +50,6 @@ public class RolesController {
                 seleccionados.add(permiso);
             }
         }
-        System.out.println(seleccionados);
         return seleccionados;
     }
 
@@ -78,27 +62,18 @@ public class RolesController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/roles/crear";
-
             // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
             Rol nuevoRol = new Rol(
                     (String) params.get("nombre"),
                     obtenerPermisos(params)
             );
 
-            // Crear la entidad Http que contiene el cuerpo de la solicitud
-            HttpEntity<Rol> requestEntity = new HttpEntity<>(nuevoRol);
-
-            // Realizar la solicitud POST a la API de actividades
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.POST,
-                    requestEntity,
-                    Void.class
+            // Llamada a la api
+            ResponseEntity<Rol> response = apiTemplateService.llamadaApi(
+                    "/roles/crear",
+                    "POST",
+                    "Void",
+                    nuevoRol
             );
 
             // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)
@@ -128,27 +103,18 @@ public class RolesController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
-
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/roles/guardar/" + params.get("id");
-
             // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
-            Rol nuevaVoluntario = new Rol(
+            Rol nuevoRol = new Rol(
                     (String) params.get("nombre"),
                     obtenerPermisos(params)
             );
 
-            // Crear la entidad Http que contiene el cuerpo de la solicitud
-            HttpEntity<Rol> requestEntity = new HttpEntity<>(nuevaVoluntario);
-
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Void> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.PUT,
-                    requestEntity,
-                    Void.class
+            // Llamada a la api
+            ResponseEntity<Rol> response = apiTemplateService.llamadaApi(
+                    "/roles/guardar/" + params.get("id"),
+                    "PUT",
+                    "Void",
+                    nuevoRol
             );
 
             // Verificar la respuesta (por ejemplo, si el código de estado es 200 OK)

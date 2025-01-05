@@ -41,7 +41,8 @@ public class ActividadController {
 
     // POST
     @PostMapping(path = "crear/{periodoId}")
-    public void crearActividad(@PathVariable Long periodoId, @RequestBody ActividadFormacion actividad) {
+    public void crearActividad(@PathVariable Long periodoId,
+                               @RequestBody ActividadFormacion actividad) {
         actividadService.crearActividad(actividad, periodoId);
     }
 

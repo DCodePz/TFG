@@ -1,15 +1,13 @@
 package com.tfg.eldest.frontend.controllers;
 
 import com.tfg.eldest.backend.periodo.Periodo;
+import com.tfg.eldest.backend.usuario.Usuario;
+import com.tfg.eldest.frontend.services.ApiTemplateService;
 import com.tfg.eldest.frontend.services.PermisosService;
 import com.tfg.eldest.frontend.services.SessionService;
-import com.tfg.eldest.backend.usuario.Usuario;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -26,14 +23,14 @@ import java.util.Map;
 @Controller
 @RequestMapping("/")
 public class HomeController {
-    @Value("${api.url}")  // Cargar la URL desde application.properties
-    private String apiUrl;
-
-    @Autowired
-    private PermisosService permisosService;
-
+    // -- Servicios --
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private PermisosService permisosService;
+    @Autowired
+    private ApiTemplateService apiTemplateService;
+    // ---------------
 
     @GetMapping
     public String home(HttpSession session,
@@ -49,26 +46,23 @@ public class HomeController {
                       @RequestParam Map<String, Object> params,
                       Model model,
                       HttpServletRequest request) {
-        return "Base";
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            return "Base";
+        }
+        return "Web";
     }
 
     private String obtenerPeriodoActual() {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
-
-        // URL de la API que devuelve las actividades
-        String apiUrl = this.apiUrl + "/periodos/habilitados";
-
-        // Realizar la solicitud GET a la API de actividades
-        ResponseEntity<List<Periodo>> response = restTemplate.exchange(
-                apiUrl,
-                HttpMethod.GET,
-                null,
-                new ParameterizedTypeReference<List<Periodo>>() {
-                }
+        // Llamada a la api
+        ResponseEntity<List<Periodo>> response = apiTemplateService.llamadaApi(
+                "/periodos/habilitados",
+                "GET",
+                "Periodos",
+                null
         );
 
-        // Obtener la lista de actividades de la respuesta
         List<Periodo> periodos = response.getBody();
 
         LocalDate fechaActual = LocalDate.now();
@@ -87,7 +81,7 @@ public class HomeController {
                 periodoMasCercano = periodo;
             }
         }
-        System.out.println(periodoMasCercano.toString());
+
         // Si no se encuentra un periodo exacto, devolver el más cercano
         if (periodoMasCercano != null) {
             return periodoMasCercano.getId().toString();
@@ -101,35 +95,32 @@ public class HomeController {
                         @RequestParam Map<String, Object> params,
                         Model model,
                         HttpServletRequest request) {
-        String id = (String) params.get("id");
-        String password = (String) params.get("password");
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            String id = (String) params.get("id");
+            String password = (String) params.get("password");
 
-        if (id != null || password != null) {
-            // Crear un objeto RestTemplate para hacer la llamada a la API
-            RestTemplate restTemplate = new RestTemplate();
+            if (id != null || password != null) {
+                // Llamada a la api
+                ResponseEntity<Usuario> response = apiTemplateService.llamadaApi(
+                        "/usuarios/" + id,
+                        "GET",
+                        "Usuario",
+                        null
+                );
 
-            // URL de la API que devuelve las actividades
-            String apiUrl = this.apiUrl + "/usuarios/" + id;
+                Usuario usuario = response.getBody();
 
-            // Realizar la solicitud GET a la API de actividades
-            ResponseEntity<Usuario> response = restTemplate.exchange(
-                    apiUrl,
-                    HttpMethod.GET,
-                    null,
-                    new ParameterizedTypeReference<Usuario>() {
-                    }
-            );
+                if (usuario.getPassword().equals(password) && usuario.getHabilitado()) {
+                    sessionService.setSession(session, id, obtenerPeriodoActual());
+                    return "pantallas/App :: content";
+                }
 
-            // Obtener la lista de actividades de la respuesta
-            Usuario usuario = response.getBody();
-
-            if (usuario.getPassword().equals(password) && usuario.getHabilitado()) {
-                sessionService.setSession(session, id, obtenerPeriodoActual());
-                return "pantallas/App :: content";
             }
-
+            return "pantallas/autenticacion/Login :: content";
         }
-        return "pantallas/autenticacion/Login :: content";
+        return "Web";
     }
 
     @GetMapping(path = "index")
@@ -137,12 +128,17 @@ public class HomeController {
                         @RequestParam Map<String, Object> params,
                         Model model,
                         HttpServletRequest request) {
-        boolean loggeado = sessionService.isUserLoggedIn(session);
-        if (loggeado) {
-            return "pantallas/App :: content";
-        } else {
-            return "pantallas/autenticacion/Login :: content";
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            boolean loggeado = sessionService.isUserLoggedIn(session);
+            if (loggeado) {
+                return "pantallas/App :: content";
+            } else {
+                return "pantallas/autenticacion/Login :: content";
+            }
         }
+        return "Web";
     }
 
     @GetMapping(path = "inicio")
@@ -150,21 +146,26 @@ public class HomeController {
                             @RequestParam Map<String, Object> params,
                             Model model,
                             HttpServletRequest request) {
-        String nombreUsuario = sessionService.getNombreUsuarioID(session);
-        Boolean coordinacion = permisosService.comprobarPermisos(sessionService.getUsuarioID(session),"/cuerpo/coordinacion");
-        String nombrePeriodo = sessionService.getNombrePeriodo(session);
-        String primario = sessionService.getPrimario(session);
-        String secundario = sessionService.getSecundario(session);
-        String logo = sessionService.getLogo(session);
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            String nombreUsuario = sessionService.getNombreUsuarioID(session);
+            Boolean coordinacion = permisosService.comprobarPermisos(sessionService.getUsuarioID(session), "/cuerpo/coordinacion");
+            String nombrePeriodo = sessionService.getNombrePeriodo(session);
+            String primario = sessionService.getPrimario(session);
+            String secundario = sessionService.getSecundario(session);
+            String logo = sessionService.getLogo(session);
 
-        model.addAttribute("usuario", nombreUsuario);
-        model.addAttribute("periodo", nombrePeriodo);
-        model.addAttribute("coordinacion", coordinacion);
-        model.addAttribute("primario", primario);
-        model.addAttribute("secundario", secundario);
-        model.addAttribute("org", sessionService.getOrg(session));
-        model.addAttribute("logo", logo);
-        return "fragments/Body :: content";
+            model.addAttribute("usuario", nombreUsuario);
+            model.addAttribute("periodo", nombrePeriodo);
+            model.addAttribute("coordinacion", coordinacion);
+            model.addAttribute("primario", primario);
+            model.addAttribute("secundario", secundario);
+            model.addAttribute("org", sessionService.getOrg(session));
+            model.addAttribute("logo", logo);
+            return "fragments/Body :: content";
+        }
+        return "Web";
     }
 
     @PostMapping(path = "inicio")
@@ -172,23 +173,29 @@ public class HomeController {
                              @RequestParam Map<String, Object> params,
                              Model model,
                              HttpServletRequest request) {
-        String nombreUsuario = sessionService.getNombreUsuarioID(session);
-        Boolean coordinacion = permisosService.comprobarPermisos(sessionService.getUsuarioID(session),"/cuerpo/coordinacion");        String periodoID = (String) params.getOrDefault("periodo", "Indefinido");
-        String primario = sessionService.getPrimario(session);
-        String secundario = sessionService.getSecundario(session);
-        String logo = sessionService.getLogo(session);
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            String nombreUsuario = sessionService.getNombreUsuarioID(session);
+            Boolean coordinacion = permisosService.comprobarPermisos(sessionService.getUsuarioID(session), "/cuerpo/coordinacion");
+            String periodoID = (String) params.getOrDefault("periodo", "Indefinido");
+            String primario = sessionService.getPrimario(session);
+            String secundario = sessionService.getSecundario(session);
+            String logo = sessionService.getLogo(session);
 
-        sessionService.setPeriodoID(session, periodoID);
-        String nombrePeriodo = sessionService.getNombrePeriodo(session);
+            sessionService.setPeriodoID(session, periodoID);
+            String nombrePeriodo = sessionService.getNombrePeriodo(session);
 
-        model.addAttribute("usuario", nombreUsuario);
-        model.addAttribute("periodo", nombrePeriodo);
-        model.addAttribute("coordinacion", coordinacion);
-        model.addAttribute("primario", primario);
-        model.addAttribute("secundario", secundario);
-        model.addAttribute("org", sessionService.getOrg(session));
-        model.addAttribute("logo", logo);
-        return "fragments/Body :: content";
+            model.addAttribute("usuario", nombreUsuario);
+            model.addAttribute("periodo", nombrePeriodo);
+            model.addAttribute("coordinacion", coordinacion);
+            model.addAttribute("primario", primario);
+            model.addAttribute("secundario", secundario);
+            model.addAttribute("org", sessionService.getOrg(session));
+            model.addAttribute("logo", logo);
+            return "fragments/Body :: content";
+        }
+        return "Web";
     }
 
     @PostMapping(path = "cabecera")
@@ -196,14 +203,19 @@ public class HomeController {
                            @RequestParam Map<String, Object> params,
                            Model model,
                            HttpServletRequest request) {
-        String url = (String) params.getOrDefault("url", "paneldecontrol");
-        String titulo = (String) params.getOrDefault("titulo", "Título");
-        String id = (String) params.getOrDefault("id", null);
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            String url = (String) params.getOrDefault("url", "paneldecontrol");
+            String titulo = (String) params.getOrDefault("titulo", "Título");
+            String id = (String) params.getOrDefault("id", null);
 
-        model.addAttribute("url", url);
-        model.addAttribute("titulo", titulo);
-        model.addAttribute("org", sessionService.getOrg(session));
-        model.addAttribute("id", id);
-        return "fragments/Cabecera :: content";
+            model.addAttribute("url", url);
+            model.addAttribute("titulo", titulo);
+            model.addAttribute("org", sessionService.getOrg(session));
+            model.addAttribute("id", id);
+            return "fragments/Cabecera :: content";
+        }
+        return "Web";
     }
 }

@@ -1,5 +1,6 @@
 package com.tfg.eldest.frontend.controllers;
 
+import com.tfg.eldest.frontend.services.PermisosService;
 import com.tfg.eldest.frontend.services.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
@@ -15,27 +16,35 @@ import java.util.Map;
 @Controller
 @RequestMapping(path = "coordinacion/personalizacion")
 public class PersonalizacionController {
+    // -- Servicios --
     @Autowired
     private SessionService sessionService;
+    @Autowired
+    private PermisosService permisosService;
+    // ---------------
 
     @PostMapping(path = "cambiar")
     public String CambiarDatos(HttpSession session,
                                @RequestParam Map<String, Object> params,
                                Model model,
                                HttpServletRequest request) {
+        String usuarioId = sessionService.getUsuarioID(session);
+        String path = request.getRequestURI();
+        if (permisosService.comprobarPermisos(usuarioId, path)) {
+            String org = (String) params.get("org");
+            String primario = (String) params.get("primario");
+            String secundario = (String) params.get("secundario");
+            String logo = (String) params.getOrDefault("logo", "default");
 
-        String org = (String) params.get("org");
-        String primario = (String) params.get("primario");
-        String secundario = (String) params.get("secundario");
-        String logo = (String) params.getOrDefault("logo", "default");
+            org = org.isEmpty() ? "Organizacion" : org;
+            primario = primario.isEmpty() ? "#212529" : primario;
+            secundario = secundario.isEmpty() ? "#212529" : secundario;
+            logo = logo.isEmpty() ? "default" : logo;
 
-        org = org.isEmpty() ? "Organizacion" : org;
-        primario = primario.isEmpty() ? "#212529" : primario;
-        secundario = secundario.isEmpty() ? "#212529" : secundario;
-        logo = logo.isEmpty() ? "default" : logo;
+            sessionService.setPersonalizacion(session, org, primario, secundario, logo);
 
-        sessionService.setPersonalizacion(session, org, primario, secundario, logo);
-
-        return "pantallas/App";
+            return "pantallas/App";
+        }
+        return "Web";
     }
 }
