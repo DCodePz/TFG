@@ -1,6 +1,7 @@
 package com.tfg.eldest.frontend.controllers;
 
 import com.tfg.eldest.backend.periodo.Periodo;
+import com.tfg.eldest.backend.personalizacion.Personalizacion;
 import com.tfg.eldest.backend.usuario.Usuario;
 import com.tfg.eldest.frontend.services.ApiTemplateService;
 import com.tfg.eldest.frontend.services.PermisosService;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -38,6 +40,19 @@ public class HomeController {
                        Model model,
                        HttpServletRequest request) {
         sessionService.removeUserSession(session);
+        // Llamada a la api
+        ResponseEntity<Personalizacion> response = apiTemplateService.llamadaApi(
+                "/personalizacion",
+                "GET",
+                "Personalizacion",
+                null
+        );
+        Personalizacion personalizacion = response.getBody();
+
+        model.addAttribute("foto", personalizacion.getFoto());
+        model.addAttribute("primario", personalizacion.getColor());
+        model.addAttribute("nombre", personalizacion.getNombre());
+        System.out.println(personalizacion.getFoto());
         return "Web";
     }
 
@@ -149,19 +164,27 @@ public class HomeController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
+            // Llamada a la api
+            ResponseEntity<Personalizacion> response2 = apiTemplateService.llamadaApi(
+                    "/personalizacion",
+                    "GET",
+                    "Personalizacion",
+                    null
+            );
+            Personalizacion personalizacion = response2.getBody();
+
             String nombreUsuario = sessionService.getNombreUsuarioID(session);
             Boolean coordinacion = permisosService.comprobarPermisos(sessionService.getUsuarioID(session), "/cuerpo/coordinacion");
             String nombrePeriodo = sessionService.getNombrePeriodo(session);
-            String primario = sessionService.getPrimario(session);
-            String secundario = sessionService.getSecundario(session);
-            String logo = sessionService.getLogo(session);
+            String primario = personalizacion.getColor();
+            String org = personalizacion.getNombre();
+            String logo = personalizacion.getFoto();
 
             model.addAttribute("usuario", nombreUsuario);
             model.addAttribute("periodo", nombrePeriodo);
             model.addAttribute("coordinacion", coordinacion);
             model.addAttribute("primario", primario);
-            model.addAttribute("secundario", secundario);
-            model.addAttribute("org", sessionService.getOrg(session));
+            model.addAttribute("org", org);
             model.addAttribute("logo", logo);
             return "fragments/Body :: content";
         }
@@ -176,12 +199,21 @@ public class HomeController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
+            // Llamada a la api
+            ResponseEntity<Personalizacion> response2 = apiTemplateService.llamadaApi(
+                    "/personalizacion",
+                    "GET",
+                    "Personalizacion",
+                    null
+            );
+            Personalizacion personalizacion = response2.getBody();
+
             String nombreUsuario = sessionService.getNombreUsuarioID(session);
             Boolean coordinacion = permisosService.comprobarPermisos(sessionService.getUsuarioID(session), "/cuerpo/coordinacion");
             String periodoID = (String) params.getOrDefault("periodo", "Indefinido");
-            String primario = sessionService.getPrimario(session);
-            String secundario = sessionService.getSecundario(session);
-            String logo = sessionService.getLogo(session);
+            String primario = personalizacion.getColor();
+            String org = personalizacion.getNombre();
+            String logo = personalizacion.getFoto();
 
             sessionService.setPeriodoID(session, periodoID);
             String nombrePeriodo = sessionService.getNombrePeriodo(session);
@@ -190,8 +222,7 @@ public class HomeController {
             model.addAttribute("periodo", nombrePeriodo);
             model.addAttribute("coordinacion", coordinacion);
             model.addAttribute("primario", primario);
-            model.addAttribute("secundario", secundario);
-            model.addAttribute("org", sessionService.getOrg(session));
+            model.addAttribute("org", org);
             model.addAttribute("logo", logo);
             return "fragments/Body :: content";
         }
@@ -206,13 +237,23 @@ public class HomeController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
+            // Llamada a la api
+            ResponseEntity<Personalizacion> response2 = apiTemplateService.llamadaApi(
+                    "/personalizacion",
+                    "GET",
+                    "Personalizacion",
+                    null
+            );
+            Personalizacion personalizacion = response2.getBody();
+
             String url = (String) params.getOrDefault("url", "paneldecontrol");
             String titulo = (String) params.getOrDefault("titulo", "Título");
+            String org = personalizacion.getNombre();
             String id = (String) params.getOrDefault("id", null);
 
             model.addAttribute("url", url);
             model.addAttribute("titulo", titulo);
-            model.addAttribute("org", sessionService.getOrg(session));
+            model.addAttribute("org", org);
             model.addAttribute("id", id);
             return "fragments/Cabecera :: content";
         }

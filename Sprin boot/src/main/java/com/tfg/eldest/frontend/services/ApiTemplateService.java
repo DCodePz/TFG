@@ -3,6 +3,7 @@ package com.tfg.eldest.frontend.services;
 import com.tfg.eldest.backend.actividadformacion.ActividadFormacion;
 import com.tfg.eldest.backend.periodo.Periodo;
 import com.tfg.eldest.backend.permiso.Permiso;
+import com.tfg.eldest.backend.personalizacion.Personalizacion;
 import com.tfg.eldest.backend.rol.Rol;
 import com.tfg.eldest.backend.usuario.Usuario;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +58,8 @@ public class ApiTemplateService {
 
             case "Permiso" -> new ParameterizedTypeReference<Permiso>() {};
             case "Permisos" -> new ParameterizedTypeReference<List<Permiso>>() {};
+
+            case "Personalizacion" -> new ParameterizedTypeReference<Personalizacion>() {};
 
             case "Rol" -> new ParameterizedTypeReference<Rol>() {};
             case "Roles" -> new ParameterizedTypeReference<List<Rol>>() {};

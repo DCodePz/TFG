@@ -17,6 +17,7 @@ public class PermisoController {
     public PermisoController(PermisoService permisoService) {
         this.permisoService = permisoService;
     }
+
     // GET
     @GetMapping
     public List<Permiso> getPermisos() {

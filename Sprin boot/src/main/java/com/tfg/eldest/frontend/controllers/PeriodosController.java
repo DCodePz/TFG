@@ -2,6 +2,7 @@ package com.tfg.eldest.frontend.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.tfg.eldest.backend.periodo.Periodo;
+import com.tfg.eldest.backend.personalizacion.Personalizacion;
 import com.tfg.eldest.frontend.services.ApiTemplateService;
 import com.tfg.eldest.frontend.services.PermisosService;
 import com.tfg.eldest.frontend.services.SessionService;
@@ -64,12 +65,21 @@ public class PeriodosController {
                 System.out.println("Error al crear el periodo: " + response.getStatusCode());
             }
 
+            // Llamada a la api
+            ResponseEntity<Personalizacion> response2 = apiTemplateService.llamadaApi(
+                    "/personalizacion",
+                    "GET",
+                    "Personalizacion",
+                    null
+            );
+            Personalizacion personalizacion = response2.getBody();
+
             String url = (String) params.getOrDefault("url", "paneldecontrol");
             String titulo = (String) params.getOrDefault("tit", "Título");
 
             model.addAttribute("url", url);
             model.addAttribute("titulo", titulo);
-            model.addAttribute("org", sessionService.getOrg(session));
+            model.addAttribute("org", personalizacion.getNombre());
             return "fragments/Cabecera :: content";
         }
         return "Web";
@@ -105,12 +115,21 @@ public class PeriodosController {
                 System.out.println("Error al editar el periodo: " + response.getStatusCode());
             }
 
+            // Llamada a la api
+            ResponseEntity<Personalizacion> response2 = apiTemplateService.llamadaApi(
+                    "/personalizacion",
+                    "GET",
+                    "Personalizacion",
+                    null
+            );
+            Personalizacion personalizacion = response2.getBody();
+
             String url = (String) params.getOrDefault("url", "paneldecontrol");
             String titulo = (String) params.getOrDefault("tit", "Título");
 
             model.addAttribute("url", url);
             model.addAttribute("titulo", titulo);
-            model.addAttribute("org", sessionService.getOrg(session));
+            model.addAttribute("org", personalizacion.getNombre());
             return "fragments/Cabecera :: content";
         }
         return "Web";

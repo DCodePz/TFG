@@ -149,45 +149,6 @@ public class PermisosService {
                 new HashSet<>(Arrays.asList("V_VOL", "C_VOL", "E_VOL", "IH_VOL")));
     }
 
-    private static final Map<String, Set<String>> accesosVoluntariosBackEnd = new HashMap<>();
-
-    static {
-        // ActividadController
-        accesosVoluntariosBackEnd.put("/actividades", new HashSet<>(Collections.singletonList("V_ACT")));
-        accesosVoluntariosBackEnd.put("/actividades/crear", new HashSet<>(Collections.singletonList("C_ACT")));
-        accesosVoluntariosBackEnd.put("/actividades/eliminar", new HashSet<>(Arrays.asList("B_ACT", "B_M_ACT")));
-        accesosVoluntariosBackEnd.put("/actividades/guardar", new HashSet<>(Arrays.asList("E_ACT", "E_M_ACT")));
-
-        // FormacionController
-        accesosVoluntariosBackEnd.put("/formaciones", new HashSet<>(Collections.singletonList("V_FOR")));
-        accesosVoluntariosBackEnd.put("/formaciones/crear", new HashSet<>(Collections.singletonList("C_FOR")));
-        accesosVoluntariosBackEnd.put("/formaciones/eliminar", new HashSet<>(Arrays.asList("B_FOR", "B_M_FOR")));
-        accesosVoluntariosBackEnd.put("/formaciones/guardar", new HashSet<>(Arrays.asList("E_FOR", "E_M_FOR")));
-
-        // PeriodoController
-        accesosVoluntariosBackEnd.put("/periodos", new HashSet<>(Collections.singletonList("V_PER")));
-        accesosVoluntariosBackEnd.put("/periodos/crear", new HashSet<>(Collections.singletonList("C_PER")));
-        accesosVoluntariosBackEnd.put("/periodos/invertirHabilitado", new HashSet<>(Collections.singletonList("IH_PER")));
-        accesosVoluntariosBackEnd.put("/periodos/guardar", new HashSet<>(Collections.singletonList("E_PER")));
-
-        // PermisoController
-        accesosVoluntarios.put("/permisos", new HashSet<>(Collections.singletonList("")));
-
-        // RolController
-        accesosVoluntariosBackEnd.put("/roles", new HashSet<>(Collections.singletonList("V_ROL")));
-        accesosVoluntariosBackEnd.put("/roles/crear", new HashSet<>(Collections.singletonList("C_ROL")));
-        accesosVoluntariosBackEnd.put("/roles/invertirHabilitado", new HashSet<>(Collections.singletonList("IH_ROL")));
-        accesosVoluntariosBackEnd.put("/roles/guardar", new HashSet<>(Collections.singletonList("E_ROL")));
-
-        // UsuarioController
-        accesosVoluntariosBackEnd.put("/usuarios", new HashSet<>(Collections.singletonList("V_VOL")));
-        accesosVoluntariosBackEnd.put("/usuarios/voluntarios", new HashSet<>(Collections.singletonList("V_VOL")));
-        accesosVoluntariosBackEnd.put("/usuarios/crear", new HashSet<>(Collections.singletonList("C_VOL")));
-        accesosVoluntariosBackEnd.put("/usuarios/invertirHabilitado", new HashSet<>(Collections.singletonList("IH_VOL")));
-        accesosVoluntariosBackEnd.put("/usuarios/guardar", new HashSet<>(Collections.singletonList("E_VOL")));
-
-    }
-
     private Usuario obtenerUsuario(String usuarioID) {
         RestTemplate restTemplate = new RestTemplate();
         String apiUrl = this.apiUrl + "/usuarios/" + usuarioID;
@@ -203,71 +164,32 @@ public class PermisosService {
 
     public Boolean comprobarPermisos(String usuarioID, String url) {
         Set<String> permisosUrl = accesosVoluntarios.get(url);
-        if (permisosUrl.contains("DEFAULT")){
-            return true;
-        }
-        if (usuarioID != null) {
-            // Obtener tipo de usuario
-            Usuario usuario = obtenerUsuario(usuarioID);
-            String tipo = usuario.getTipo();
-
-//            System.out.println("INFO: " + usuario);
-
-            switch (tipo) {
-                case "Voluntario":
-                    if (url != null) {
-                        for (Rol rol : usuario.getRoles()) {
-                            List<Permiso> permisos = (List<Permiso>) rol.getPermisos();
-//                            permisos.forEach(permiso -> System.out.println(permiso.getNombre()));
-                            if (permisosUrl != null) {
-                                for (Permiso p : permisos) {
-                                    if (permisosUrl.contains(p.getNombre())) {
-//                                        System.out.println("INFO: " + p.getNombre());
-                                        return true;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    break;
-
-                case "Socio":
-                    break;
+        if (permisosUrl != null) {
+            if (permisosUrl.contains("DEFAULT")) {
+                return true;
             }
-        }
+            if (usuarioID != null) {
+                // Obtener tipo de usuario
+                Usuario usuario = obtenerUsuario(usuarioID);
+                String tipo = usuario.getTipo();
 
-        return false;
-    }
-
-    public Boolean comprobarPermisosBackEnd(String usuarioID, String url) {
-        if (usuarioID != null) {
-            Usuario usuario = obtenerUsuario(usuarioID);
-            String tipo = usuario.getTipo();
-            System.out.println("INFO: " + usuario);
-
-
-            switch (tipo) {
-                case "Voluntario":
-                    if (url != null) {
-                        for (Rol rol : usuario.getRoles()) {
-                            List<Permiso> permisos = (List<Permiso>) rol.getPermisos();
-                            permisos.forEach(permiso -> System.out.println(permiso.getNombre()));
-                            Set<String> permisosUrl = accesosVoluntariosBackEnd.get(url);
-                            System.out.println("INFO: " + permisosUrl);
-                            if (permisosUrl != null) {
+                switch (tipo) {
+                    case "Voluntario":
+                        if (url != null) {
+                            for (Rol rol : usuario.getRoles()) {
+                                List<Permiso> permisos = (List<Permiso>) rol.getPermisos();
                                 for (Permiso p : permisos) {
                                     if (permisosUrl.contains(p.getNombre())) {
-                                        System.out.println("INFO: " + p.getNombre());
                                         return true;
                                     }
                                 }
                             }
                         }
-                    }
-                    break;
+                        break;
 
-                case "Socio":
-                    break;
+                    case "Socio":
+                        break;
+                }
             }
         }
         return false;

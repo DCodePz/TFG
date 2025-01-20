@@ -52,7 +52,7 @@ public class PeriodoController {
 
     @PutMapping(path = "guardar/{periodoId}")
     public void guardarPeriodo(@PathVariable Long periodoId,
-                                 @RequestBody(required = false) Periodo periodoModificado) {
+                               @RequestBody(required = false) Periodo periodoModificado) {
         periodoService.guardarPeriodo(periodoId, periodoModificado);
     }
 }

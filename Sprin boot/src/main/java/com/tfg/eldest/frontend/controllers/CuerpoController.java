@@ -3,6 +3,7 @@ package com.tfg.eldest.frontend.controllers;
 import com.tfg.eldest.backend.actividadformacion.ActividadFormacion;
 import com.tfg.eldest.backend.periodo.Periodo;
 import com.tfg.eldest.backend.permiso.Permiso;
+import com.tfg.eldest.backend.personalizacion.Personalizacion;
 import com.tfg.eldest.backend.rol.Rol;
 import com.tfg.eldest.backend.usuario.Usuario;
 import com.tfg.eldest.frontend.services.ApiTemplateService;
@@ -528,6 +529,16 @@ public class CuerpoController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
+            // Llamada a la api
+            ResponseEntity<Personalizacion> response = apiTemplateService.llamadaApi(
+                    "/personalizacion",
+                    "GET",
+                    "Personalizacion",
+                    null
+            );
+            Personalizacion personalizacion = response.getBody();
+
+            model.addAttribute("color", personalizacion.getColor());
             return "fragments/cuerpo/coordinacion/personalizacion/Personalizacion :: content";
         }
         return "Web";
@@ -560,8 +571,9 @@ public class CuerpoController {
             model.addAttribute("bool_EditarActividad", tmp);
             tmp = permisosService.comprobarPermisos(usuarioId, "/cuerpo/actividades/eliminar");
             model.addAttribute("bool_EliminarActividad", tmp);
-            tmp = permisosService.comprobarPermisos(usuarioId, "/pdfs/generar/Actividad");
-            model.addAttribute("bool_ImprimirActividad", tmp);
+//            tmp = permisosService.comprobarPermisos(usuarioId, "/pdfs/generar/Actividad");
+//            model.addAttribute("bool_ImprimirActividad", tmp);
+            model.addAttribute("bool_ImprimirActividad", false);
             return "fragments/cuerpo/actividades/Actividades :: content";
         }
         return "Web";
@@ -702,8 +714,9 @@ public class CuerpoController {
             model.addAttribute("bool_EditarFormacion", tmp);
             tmp = permisosService.comprobarPermisos(usuarioId, "/cuerpo/formaciones/eliminar");
             model.addAttribute("bool_EliminarFormacion", tmp);
-            tmp = permisosService.comprobarPermisos(usuarioId, "/pdfs/generar/formaciones");
-            model.addAttribute("bool_ImprimirFormacion", tmp);
+//            tmp = permisosService.comprobarPermisos(usuarioId, "/pdfs/generar/Formacion");
+//            model.addAttribute("bool_ImprimirFormacion", tmp);
+            model.addAttribute("bool_ImprimirFormacion", false);
             return "fragments/cuerpo/formaciones/Formaciones :: content";
         }
         return "Web";

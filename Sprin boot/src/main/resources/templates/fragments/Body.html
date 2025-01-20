@@ -68,9 +68,9 @@
                     <li>
                         <a th:text="${usuario}" class="dropdown-item disabled text-black text-center">Invitado</a>
                     </li>
-                    <li>
-                        <a class="dropdown-item">Cambiar contraseña</a>
-                    </li>
+<!--                    <li>-->
+<!--                        <a class="dropdown-item">Cambiar contraseña</a>-->
+<!--                    </li>-->
                     <li>
                         <hr class="dropdown-divider"/>
                     </li>
@@ -89,8 +89,7 @@
     <div id="layoutSidenav">
         <div id="layoutSidenav_nav">
             <nav class="sb-sidenav accordion sb-sidenav-dark"
-                 id="sidenavAccordion"
-                 th:style="|background-color:${secundario}|">
+                 id="sidenavAccordion">
                 <div class="sb-sidenav-footer">
                     <div class="small">Sesión iniciada como:</div>
                     <div th:text="${usuario}">Invitado</div>
@@ -186,8 +185,8 @@
                         </div>
                         <div>
                             <b>Version</b>
-                            Eldest
-                            <img th:src="${logo}" width="20" alt="Logo de la aplicación">
+                            AsociaNet
+<!--                            <img src="" width="20" alt="Logo de la aplicación">-->
                         </div>
                     </div>
                 </div>
