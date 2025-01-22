@@ -34,6 +34,8 @@ public class PeriodosController {
 
     @Autowired
     private CuerpoController cuerpoController;
+    @Autowired
+    private HomeController homeController;
 
     @PostMapping(path = "crear")
     public String Crear(HttpSession session,
@@ -82,7 +84,7 @@ public class PeriodosController {
             model.addAttribute("org", personalizacion.getNombre());
             return "fragments/Cabecera :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "guardar")
@@ -132,7 +134,7 @@ public class PeriodosController {
             model.addAttribute("org", personalizacion.getNombre());
             return "fragments/Cabecera :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "buscar")
@@ -164,6 +166,6 @@ public class PeriodosController {
 
             return fragment;
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 }

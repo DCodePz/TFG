@@ -118,35 +118,4 @@ public class SessionService {
         }
         return false;
     }
-
-
-//    // PERSONALIZACION
-//    public void setPersonalizacion(HttpSession session, String org, String primario, String secundario, String logo) {
-//        System.out.println(org + ", " + primario +", " + secundario + ", " + logo);
-//        session.setAttribute("org", org);
-//        session.setAttribute("primario", primario);
-//        session.setAttribute("secundario", secundario);
-//        session.setAttribute("logo", logo);
-//    }
-//
-//    public String getOrg(HttpSession session) {
-//        String org = (String) session.getAttribute("org");
-//        return org != null ? org : "Organización";
-//
-//    }
-//
-//    public String getPrimario(HttpSession session) {
-//        String primario = (String) session.getAttribute("primario");
-//        return primario != null ? primario : "#212529";
-//    }
-//
-//    public String getSecundario(HttpSession session) {
-//        String secundario = (String) session.getAttribute("secundario");
-//        return secundario != null ? secundario : "#212529";
-//    }
-//
-//    public String getLogo(HttpSession session) {
-//        String logo = (String) session.getAttribute("logo");
-//        return logo != null ? logo : "";
-//    }
 }

@@ -33,6 +33,9 @@ public class RolesController {
     private ApiTemplateService apiTemplateService;
     // ---------------
 
+    @Autowired
+    private HomeController homeController;
+
     private List<Permiso> obtenerPermisos(@RequestParam Map<String, Object> params) {
         // Llamada a la api
         ResponseEntity<List<Permiso>> response = apiTemplateService.llamadaApi(
@@ -53,7 +56,6 @@ public class RolesController {
         }
         return seleccionados;
     }
-
 
     @PostMapping(path = "crear")
     public String Crear(HttpSession session,
@@ -101,7 +103,7 @@ public class RolesController {
             model.addAttribute("org", personalizacion.getNombre());
             return "fragments/Cabecera :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "guardar")
@@ -151,6 +153,6 @@ public class RolesController {
             model.addAttribute("org", personalizacion.getNombre());
             return "fragments/Cabecera :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 }

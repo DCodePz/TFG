@@ -35,6 +35,8 @@ public class VoluntariosController {
 
     @Autowired
     private CuerpoController cuerpoController;
+    @Autowired
+    private HomeController homeController;
 
     private List<Rol> obtenerRoles(@RequestParam Map<String, Object> params) {
         // Llamada a la api
@@ -108,7 +110,7 @@ public class VoluntariosController {
             model.addAttribute("org", personalizacion.getNombre());
             return "fragments/Cabecera :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "guardar")
@@ -162,7 +164,7 @@ public class VoluntariosController {
             model.addAttribute("org", personalizacion.getNombre());
             return "fragments/Cabecera :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "buscar")
@@ -194,6 +196,6 @@ public class VoluntariosController {
 
             return fragment;
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 }

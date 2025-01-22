@@ -32,6 +32,9 @@ public class PersonalizacionesController {
     private ApiTemplateService apiTemplateService;
     // ---------------
 
+    @Autowired
+    private HomeController homeController;
+
     @PostMapping(path = "cambiar")
     public String CambiarDatos(HttpSession session,
                                @RequestParam Map<String, Object> params,
@@ -40,18 +43,6 @@ public class PersonalizacionesController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-//            String org = (String) params.get("org");
-//            String primario = (String) params.get("primario");
-//            String secundario = (String) params.get("secundario");
-//            String logo = (String) params.getOrDefault("logo", "default");
-//
-//            org = org.isEmpty() ? "Organizacion" : org;
-//            primario = primario.isEmpty() ? "#212529" : primario;
-//            secundario = secundario.isEmpty() ? "#212529" : secundario;
-//            logo = logo.isEmpty() ? "default" : logo;
-//
-//            sessionService.setPersonalizacion(session, org, primario, secundario, logo);
-
             // Crear el objeto Personalizacion que se enviará en el cuerpo de la solicitud
             Personalizacion nuevaPersonalizacion = new Personalizacion(
                     (String) params.get("org"),
@@ -68,6 +59,6 @@ public class PersonalizacionesController {
 
             return "pantallas/App";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 }

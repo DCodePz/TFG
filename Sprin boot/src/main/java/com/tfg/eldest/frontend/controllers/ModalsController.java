@@ -35,6 +35,9 @@ public class ModalsController {
     private ApiTemplateService apiTemplateService;
     // ---------------
 
+    @Autowired
+    private HomeController homeController;
+
     @GetMapping(path = "periodo/cambiar")
     public String cambiarPeriodo(HttpSession session,
                                  @RequestParam Map<String, Object> params,
@@ -54,7 +57,7 @@ public class ModalsController {
             model.addAttribute("periodos", response.getBody());
             return "fragments/modals/ModalesPeriodo :: modalCambiarPeriodo";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "periodo/in_habilitar")
@@ -73,7 +76,7 @@ public class ModalsController {
             model.addAttribute("accion", accion);
             return "fragments/modals/ModalesPeriodo :: modalIn_HabilitarPeriodo";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "actividad/eliminar")
@@ -90,7 +93,7 @@ public class ModalsController {
             model.addAttribute("titulo", titulo);
             return "fragments/modals/ModalesActividad :: modalEliminarActividad";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "formacion/eliminar")
@@ -107,7 +110,7 @@ public class ModalsController {
             model.addAttribute("titulo", titulo);
             return "fragments/modals/ModalesFormacion :: modalEliminarFormacion";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "voluntario/in_habilitar")
@@ -126,7 +129,7 @@ public class ModalsController {
             model.addAttribute("accion", accion);
             return "fragments/modals/ModalesVoluntarios :: modalIn_HabilitarVoluntario";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "rol/in_habilitar")
@@ -145,6 +148,6 @@ public class ModalsController {
             model.addAttribute("accion", accion);
             return "fragments/modals/ModalesRoles :: modalIn_HabilitarRol";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 }

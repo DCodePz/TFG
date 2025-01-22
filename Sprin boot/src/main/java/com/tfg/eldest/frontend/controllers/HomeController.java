@@ -66,7 +66,7 @@ public class HomeController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             return "Base";
         }
-        return "Web";
+        return home(session,params,model,request);
     }
 
     private String obtenerPeriodoActual() {
@@ -133,9 +133,19 @@ public class HomeController {
                 }
 
             }
+
+            // Llamada a la api
+            ResponseEntity<Personalizacion> response = apiTemplateService.llamadaApi(
+                    "/personalizacion",
+                    "GET",
+                    "Personalizacion",
+                    null
+            );
+            Personalizacion personalizacion = response.getBody();
+            model.addAttribute("primario", personalizacion.getColor());
             return "pantallas/autenticacion/Login :: content";
         }
-        return "Web";
+        return home(session,params,model,request);
     }
 
     @GetMapping(path = "index")
@@ -150,10 +160,19 @@ public class HomeController {
             if (loggeado) {
                 return "pantallas/App :: content";
             } else {
+                // Llamada a la api
+                ResponseEntity<Personalizacion> response = apiTemplateService.llamadaApi(
+                        "/personalizacion",
+                        "GET",
+                        "Personalizacion",
+                        null
+                );
+                Personalizacion personalizacion = response.getBody();
+                model.addAttribute("primario", personalizacion.getColor());
                 return "pantallas/autenticacion/Login :: content";
             }
         }
-        return "Web";
+        return home(session,params,model,request);
     }
 
     @GetMapping(path = "inicio")
@@ -188,7 +207,7 @@ public class HomeController {
             model.addAttribute("logo", logo);
             return "fragments/Body :: content";
         }
-        return "Web";
+        return home(session,params,model,request);
     }
 
     @PostMapping(path = "inicio")
@@ -226,7 +245,7 @@ public class HomeController {
             model.addAttribute("logo", logo);
             return "fragments/Body :: content";
         }
-        return "Web";
+        return home(session,params,model,request);
     }
 
     @PostMapping(path = "cabecera")
@@ -257,6 +276,6 @@ public class HomeController {
             model.addAttribute("id", id);
             return "fragments/Cabecera :: content";
         }
-        return "Web";
+        return home(session,params,model,request);
     }
 }

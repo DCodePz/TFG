@@ -38,6 +38,9 @@ public class CuerpoController {
     private ApiTemplateService apiTemplateService;
     // ---------------
 
+    @Autowired
+    private HomeController homeController;
+
     private List<Usuario> obtenerVoluntariosHabilitados() {
         // Llamada a la api
         ResponseEntity<List<Usuario>> response = apiTemplateService.llamadaApi(
@@ -91,7 +94,7 @@ public class CuerpoController {
             model.addAttribute("bool_VerFormaciones", tmp);
             return "fragments/cuerpo/PanelDeControl :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     //    COORDINACIÓN
@@ -113,7 +116,7 @@ public class CuerpoController {
             model.addAttribute("bool_VerPersonalizacion", tmp);
             return "fragments/cuerpo/coordinacion/Coordinacion :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/voluntarios")
@@ -142,7 +145,7 @@ public class CuerpoController {
             model.addAttribute("bool_InHabilitarVoluntario", tmp);
             return "fragments/cuerpo/coordinacion/voluntarios/Voluntarios :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/voluntarios/nuevo")
@@ -164,7 +167,7 @@ public class CuerpoController {
             model.addAttribute("roles", response.getBody());
             return "fragments/cuerpo/coordinacion/voluntarios/NuevoVoluntario :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/voluntarios/editar")
@@ -212,7 +215,7 @@ public class CuerpoController {
             model.addAttribute("roles", roles);
             return "fragments/cuerpo/coordinacion/voluntarios/InfoVoluntario :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/voluntarios/in_habilitar")
@@ -242,7 +245,7 @@ public class CuerpoController {
 
             return Voluntarios(session, params, model, request);
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/roles")
@@ -271,7 +274,7 @@ public class CuerpoController {
             model.addAttribute("bool_InHabilitarRol", tmp);
             return "fragments/cuerpo/coordinacion/roles/Roles :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/roles/nuevo")
@@ -293,7 +296,7 @@ public class CuerpoController {
             model.addAttribute("permisos", response.getBody());
             return "fragments/cuerpo/coordinacion/roles/NuevoRol :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/roles/editar")
@@ -341,7 +344,7 @@ public class CuerpoController {
 
             return "fragments/cuerpo/coordinacion/roles/InfoRol :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/roles/ver")
@@ -391,7 +394,7 @@ public class CuerpoController {
 
             return "fragments/cuerpo/coordinacion/roles/VerRol :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/roles/in_habilitar")
@@ -421,7 +424,7 @@ public class CuerpoController {
 
             return Roles(session, params, model, request);
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/periodos")
@@ -450,7 +453,7 @@ public class CuerpoController {
             model.addAttribute("bool_InHabilitarPeriodo", tmp);
             return "fragments/cuerpo/coordinacion/periodos/Periodos :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/periodos/nuevo")
@@ -463,7 +466,7 @@ public class CuerpoController {
         if (permisosService.comprobarPermisos(usuarioId, path)) {
             return "fragments/cuerpo/coordinacion/periodos/NuevoPeriodo :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/periodos/editar")
@@ -488,7 +491,7 @@ public class CuerpoController {
 
             return "fragments/cuerpo/coordinacion/periodos/InfoPeriodo :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/periodos/in_habilitar")
@@ -518,7 +521,7 @@ public class CuerpoController {
 
             return Periodos(session, params, model, request);
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "coordinacion/personalizacion")
@@ -541,7 +544,7 @@ public class CuerpoController {
             model.addAttribute("color", personalizacion.getColor());
             return "fragments/cuerpo/coordinacion/personalizacion/Personalizacion :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     //    ACTIVIDADES
@@ -576,7 +579,7 @@ public class CuerpoController {
             model.addAttribute("bool_ImprimirActividad", false);
             return "fragments/cuerpo/actividades/Actividades :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     // TODO: Filtar el rol de usuario
@@ -591,7 +594,7 @@ public class CuerpoController {
             model.addAttribute("encargados", obtenerVoluntariosHabilitados());
             return "fragments/cuerpo/actividades/NuevaActividad :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
 
@@ -654,7 +657,7 @@ public class CuerpoController {
             model.addAttribute("encargados", encargados);
             return "fragments/cuerpo/actividades/InfoActividad :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "actividades/eliminar")
@@ -684,7 +687,7 @@ public class CuerpoController {
 
             return Actividades(session, params, model, request);
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     //    FORMACIONES
@@ -719,7 +722,7 @@ public class CuerpoController {
             model.addAttribute("bool_ImprimirFormacion", false);
             return "fragments/cuerpo/formaciones/Formaciones :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     // TODO: Filtar el rol de usuario
@@ -734,7 +737,7 @@ public class CuerpoController {
             model.addAttribute("encargados", obtenerVoluntariosHabilitados());
             return "fragments/cuerpo/formaciones/NuevaFormacion :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "formaciones/editar")
@@ -794,7 +797,7 @@ public class CuerpoController {
             model.addAttribute("encargados", encargados);
             return "fragments/cuerpo/formaciones/InfoFormacion :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "formaciones/eliminar")
@@ -824,7 +827,7 @@ public class CuerpoController {
 
             return Formaciones(session, params, model, request);
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
 }

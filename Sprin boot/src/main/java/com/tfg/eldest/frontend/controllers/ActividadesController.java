@@ -37,6 +37,8 @@ public class ActividadesController {
 
     @Autowired
     private CuerpoController cuerpoController;
+    @Autowired
+    private HomeController homeController;
 
     private List<Usuario> obtenerEncargados(@RequestParam Map<String, Object> params) {
         // Llamada a la api
@@ -146,7 +148,7 @@ public class ActividadesController {
             model.addAttribute("org", personalizacion.getNombre());
             return "fragments/Cabecera :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping(path = "guardar")
@@ -221,7 +223,7 @@ public class ActividadesController {
             model.addAttribute("org", personalizacion.getNombre());
             return "fragments/Cabecera :: content";
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 
     @PostMapping("buscar")
@@ -254,6 +256,6 @@ public class ActividadesController {
 
             return fragment;
         }
-        return "Web";
+        return homeController.home(session,params,model,request);
     }
 }
