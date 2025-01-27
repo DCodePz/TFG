@@ -32,7 +32,6 @@ public class UsuarioService {
         return usuarioRepository.getVoluntariosHabilitados();
     }
 
-    // TODO: Revisar restricciones de campos que haya que comprobar
     public void crearUsuario(Usuario usuario) {
         if (usuario.getPassword().isEmpty()) {
             throw new IllegalArgumentException("Algún campo es vacio");

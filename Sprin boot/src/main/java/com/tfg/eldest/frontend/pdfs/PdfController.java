@@ -7,7 +7,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
@@ -18,7 +21,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping(path = "pdfs")
 public class PdfController {
-    @Value("${api.url}")  // Cargar la URL desde application.properties
+    @Value("${api.url}")
     private String apiUrl;
 
     private final PdfService pdfService;
@@ -28,7 +31,6 @@ public class PdfController {
     }
 
     private Periodo obtenerPeriodo(Long id) {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
         String apiUrl = this.apiUrl + "/periodo/" + id;
@@ -48,9 +50,7 @@ public class PdfController {
         return periodo;
     }
 
-    private ActividadFormacion obtenerActividadFormacion(String tipo, Long id) {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
-        RestTemplate restTemplate = new RestTemplate();
+    private ActividadFormacion obtenerActividadFormacion(String tipo, Long id) {RestTemplate restTemplate = new RestTemplate();
 
         String apiUrl = this.apiUrl;
         if (tipo.equals("Actividad")) {

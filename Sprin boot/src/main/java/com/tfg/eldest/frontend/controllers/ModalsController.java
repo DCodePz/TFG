@@ -1,6 +1,5 @@
 package com.tfg.eldest.frontend.controllers;
 
-import com.tfg.eldest.backend.actividadformacion.ActividadFormacion;
 import com.tfg.eldest.backend.periodo.Periodo;
 import com.tfg.eldest.frontend.services.ApiTemplateService;
 import com.tfg.eldest.frontend.services.PermisosService;
@@ -8,9 +7,6 @@ import com.tfg.eldest.frontend.services.SessionService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.ParameterizedTypeReference;
-import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,7 +14,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.client.RestTemplate;
 
 import java.util.List;
 import java.util.Map;

@@ -97,7 +97,6 @@ public class FormacionesController {
                 grupo_edad += params.get("mayores");
             }
 
-            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
             ActividadFormacion nuevaFormacion = new ActividadFormacion(
                     (String) params.get("numero"),
                     (String) params.get("titulo"),
@@ -172,7 +171,6 @@ public class FormacionesController {
                 grupo_edad += params.get("mayores");
             }
 
-            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
             ActividadFormacion nuevaFormacion = new ActividadFormacion(
                     (String) params.get("numero"),
                     (String) params.get("titulo"),

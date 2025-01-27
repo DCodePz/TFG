@@ -582,7 +582,6 @@ public class CuerpoController {
         return homeController.home(session,params,model,request);
     }
 
-    // TODO: Filtar el rol de usuario
     @PostMapping(path = "actividades/nueva")
     public String NuevaActividad(HttpSession session,
                                  @RequestParam Map<String, Object> params,
@@ -596,7 +595,6 @@ public class CuerpoController {
         }
         return homeController.home(session,params,model,request);
     }
-
 
     @PostMapping(path = "actividades/editar")
     public String EditarActividad(HttpSession session,
@@ -622,7 +620,7 @@ public class CuerpoController {
 
             model.addAttribute("actividad", actividad);
 
-            // Procesamos la edades
+            // Procesamos las edades
             String[] partes = actividad.getGrupo_edad().split(",");
             Boolean ppChecked = FALSE, pgChecked = FALSE, mdChecked = FALSE, myChecked = FALSE;
             for (String parte : partes) {
@@ -725,7 +723,6 @@ public class CuerpoController {
         return homeController.home(session,params,model,request);
     }
 
-    // TODO: Filtar el rol de usuario
     @PostMapping(path = "formaciones/nueva")
     public String NuevaFormacion(HttpSession session,
                                  @RequestParam Map<String, Object> params,

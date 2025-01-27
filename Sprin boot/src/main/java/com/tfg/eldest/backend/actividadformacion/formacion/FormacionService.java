@@ -39,7 +39,6 @@ public class FormacionService {
         return formacionRepository.getFormacionesPorPeriodo(periodoId);
     }
 
-    // TODO: Revisar restricciones de campos que haya que comprobar
     public void crearFormacion(ActividadFormacion formacion, Long periodoId) {
         if (formacion.getNumero() == null || formacion.getNumero().isEmpty()) {
             throw new IllegalStateException("Campo número vacio");

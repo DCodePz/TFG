@@ -14,7 +14,7 @@ import java.util.*;
 
 @Service
 public class PermisosService {
-    @Value("${api.url}")  // Cargar la URL desde application.properties
+    @Value("${api.url}")
     private String apiUrl;
 
     private static final Map<String, Set<String>> accesosVoluntarios = new HashMap<>();

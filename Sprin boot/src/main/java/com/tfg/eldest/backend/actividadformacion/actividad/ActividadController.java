@@ -6,8 +6,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// TODO: Restricciones de permisos
-
 @RestController
 @RequestMapping(path = "api/v1/actividades")
 public class ActividadController {
@@ -60,5 +58,4 @@ public class ActividadController {
 
     // TODO: Evaluar actividad
     // (path = "evaluar/{actividadId}")
-
 }

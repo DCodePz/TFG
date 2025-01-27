@@ -45,7 +45,6 @@ public class PeriodosController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
             Periodo nuevoPeriodo = new Periodo(
                     (String) params.get("nombre"),
                     LocalDate.parse((String) params.get("fechaInicio")),
@@ -95,7 +94,6 @@ public class PeriodosController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
             Periodo nuevoPeriodo = new Periodo(
                     (String) params.get("nombre"),
                     LocalDate.parse((String) params.get("fechaInicio")),

@@ -5,8 +5,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-// TODO: Restricciones de permisos
-
 @RestController
 @RequestMapping(path = "api/v1/periodos")
 public class PeriodoController {

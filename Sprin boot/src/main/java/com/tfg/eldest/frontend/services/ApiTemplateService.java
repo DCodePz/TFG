@@ -21,7 +21,7 @@ import java.util.List;
 
 @Service
 public class ApiTemplateService {
-    @Value("${api.url}")  // Cargar la URL desde application.properties
+    @Value("${api.url}")
     private String apiUrl;
 
     // -- Servicios --

@@ -67,7 +67,6 @@ public class VoluntariosController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
             Usuario nuevoVoluntario = new Usuario(
                     Long.parseLong((String) params.get("id")),
                     (String) params.get("nombre"),
@@ -121,7 +120,6 @@ public class VoluntariosController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
             Usuario nuevoVoluntario = new Usuario(
                     Long.parseLong((String) params.get("id")),
                     (String) params.get("nombre"),

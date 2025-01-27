@@ -40,7 +40,6 @@ public class ActividadService {
         return actividadRepository.getActividadesPorPeriodo(periodoId);
     }
 
-    // TODO: Revisar restricciones de campos que haya que comprobar
     public void crearActividad(ActividadFormacion actividad, Long periodoId) {
         if (actividad.getNumero() == null || actividad.getNumero().isEmpty()) {
             throw new IllegalStateException("Campo número vacio");

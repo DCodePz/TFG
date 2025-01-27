@@ -65,7 +65,6 @@ public class RolesController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
             Rol nuevoRol = new Rol(
                     (String) params.get("nombre"),
                     obtenerPermisos(params)
@@ -115,7 +114,6 @@ public class RolesController {
         String usuarioId = sessionService.getUsuarioID(session);
         String path = request.getRequestURI();
         if (permisosService.comprobarPermisos(usuarioId, path)) {
-            // Crear el objeto ActividadFormacion que se enviará en el cuerpo de la solicitud
             Rol nuevoRol = new Rol(
                     (String) params.get("nombre"),
                     obtenerPermisos(params)

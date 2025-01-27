@@ -12,7 +12,7 @@ import org.springframework.web.client.RestTemplate;
 
 @Service
 public class SessionService {
-    @Value("${api.url}")  // Cargar la URL desde application.properties
+    @Value("${api.url}")
     private String apiUrl;
 
     // Método para guardar datos en la sesión
@@ -23,7 +23,6 @@ public class SessionService {
 
     // Método para obtener el id y nombre del usuario de la sesión
     public String getNombreUsuarioID(HttpSession session) {
-        // Crear un objeto RestTemplate para hacer la llamada a la API
         RestTemplate restTemplate = new RestTemplate();
 
         // URL de la API que devuelve las actividades

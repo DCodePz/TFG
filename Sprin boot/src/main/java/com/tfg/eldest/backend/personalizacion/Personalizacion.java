@@ -2,8 +2,6 @@ package com.tfg.eldest.backend.personalizacion;
 
 import jakarta.persistence.*;
 
-import java.util.Arrays;
-
 @Entity
 @Table
 public class Personalizacion {
