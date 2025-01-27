@@ -159,6 +159,8 @@ public class SetUpConfig {
         return periodos;
     }
 
+    // Descomentar la siguiente función para poblar la base de datos, si ya está poblada dejar comentada.
+    /*
     @Bean
     CommandLineRunner commandLineRunnerSetUp() {
         return args -> {
@@ -240,4 +242,5 @@ public class SetUpConfig {
             formacionRepository.saveAll(formaciones);
         };
     }
+    */
 }
